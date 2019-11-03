@@ -31,6 +31,7 @@ export default function Login() {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then(() => {
+        firebase.analytics().logEvent('login', {});
         history.replace('/');
       })
       .catch(console.log);
@@ -59,7 +60,7 @@ export default function Login() {
             fullWidth
             variant="outlined"
             label="Password"
-            type="email"
+            type="password"
             autoComplete="current-password"
             value={password}
             onChange={event => setPassword(event.target.value)}

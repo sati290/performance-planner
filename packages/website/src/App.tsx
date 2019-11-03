@@ -10,7 +10,7 @@ import './FirebaseInit';
 import TopBar from './components/TopBar';
 import Home from './routes/Home';
 import Login from './routes/Login';
-import { Typography } from '@material-ui/core';
+import { CircularProgress, Container } from '@material-ui/core';
 
 firebase.analytics();
 
@@ -20,25 +20,27 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const unsubscribe = firebase.auth().onAuthStateChanged(user => {
-      setReady(true);
       setUser(user);
+      setReady(true);
     });
 
     return unsubscribe;
   }, []);
 
-  return ready ? (
+  return (
     <Router>
       <TopBar />
-      <Switch>
-        <Route path="/login">
-          <Login />
-        </Route>
-        <Route path="/">{user ? <Home /> : <Redirect to="/login" />}</Route>
-      </Switch>
+      {ready ? (
+        <Switch>
+          <Route path="/login">{user ? <Redirect to="/" /> : <Login />}</Route>
+          <Route path="/">{user ? <Home /> : <Redirect to="/login" />}</Route>
+        </Switch>
+      ) : (
+        <Container maxWidth="xs">
+          <CircularProgress />
+        </Container>
+      )}
     </Router>
-  ) : (
-    <Typography>Loading...</Typography>
   );
 };
 
