@@ -1,11 +1,15 @@
 import React from 'react';
 import * as firebase from './Firebase';
-import './App.css';
+import TopBar from './components/TopBar';
 
 firebase.analytics();
 
 const App: React.FC = () => {
-  return <div></div>;
+  return (
+    <>
+      <TopBar />
+    </>
+  );
 };
 
 export default App;
