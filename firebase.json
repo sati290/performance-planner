@@ -3,6 +3,12 @@
     "predeploy": "npm --prefix packages/website run build",
     "public": "packages/website/build",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
     "headers": [
       {
         "source": "*",
