@@ -5,6 +5,7 @@
     "deploy-hosting": "firebase deploy --only hosting"
   },
   "devDependencies": {
-    "lerna": "^3.18.3"
+    "lerna": "^3.18.3",
+    "prettier": "^1.18.2"
   }
 }
