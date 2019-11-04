@@ -47,7 +47,6 @@ export default function Login({ user }: LoginProps) {
     <Container maxWidth="xs" className={classes.container}>
       <Typography variant="h5">Sign in</Typography>
       <Grid container direction="column" spacing={2}>
-        <Grid item xs></Grid>
         <Grid item xs>
           <TextField
             required
