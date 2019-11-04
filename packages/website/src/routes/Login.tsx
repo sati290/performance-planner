@@ -36,7 +36,6 @@ export default function Login({ user }: LoginProps) {
       .signInWithEmailAndPassword(email, password)
       .then(() => {
         firebase.analytics().logEvent('login', {});
-        history.replace('/');
       })
       .catch(console.log);
   }
