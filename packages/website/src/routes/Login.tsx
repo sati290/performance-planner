@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router';
+import { useHistory, Redirect } from 'react-router';
 import {
   Button,
   Grid,
@@ -19,7 +19,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Login() {
+type LoginProps = {
+  user: firebase.User | any;
+};
+
+export default function Login({ user }: LoginProps) {
   const classes = useStyles();
   const history = useHistory();
 
@@ -37,7 +41,9 @@ export default function Login() {
       .catch(console.log);
   }
 
-  return (
+  return user ? (
+    <Redirect to="/" />
+  ) : (
     <Container maxWidth="xs" className={classes.container}>
       <Typography variant="h5">Sign in</Typography>
       <Grid container direction="column" spacing={2}>

@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  BrowserRouter as Router,
-  Route,
-  Switch,
-  Redirect,
-} from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import * as firebase from 'firebase/app';
 import './FirebaseInit';
 import TopBar from './components/TopBar';
@@ -29,11 +24,15 @@ const App: React.FC = () => {
 
   return (
     <Router>
-      <TopBar />
+      <TopBar user={user} />
       {ready ? (
         <Switch>
-          <Route path="/login">{user ? <Redirect to="/" /> : <Login />}</Route>
-          <Route path="/">{user ? <Home /> : <Redirect to="/login" />}</Route>
+          <Route path="/login">
+            <Login user={user} />
+          </Route>
+          <Route path="/">
+            <Home user={user} />
+          </Route>
         </Switch>
       ) : (
         <Container maxWidth="xs">
