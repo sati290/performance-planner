@@ -27,7 +27,6 @@ const Routes: React.FC<RoutesProps> = ({ user }) => {
 
       gtag('set', { page_path: location.pathname });
       gtag('event', 'page_view');
-      //gtag('config', process.env.REACT_APP_MEASUREMENT_ID || '', {page_path: location.pathname});
 
       return unlisten;
     });
