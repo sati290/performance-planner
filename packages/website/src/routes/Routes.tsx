@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
-import { Switch, Route, useHistory } from 'react-router-dom';
+import { Switch, Route, useHistory, Redirect } from 'react-router-dom';
 import RestrictedRoute from '../components/RestrictedRoute';
 import Login from './Login';
 import Home from './Home';
+import AuthCallback from './AuthCallback';
 
 type RoutesProps = {
   user: firebase.User | null;
@@ -27,9 +28,13 @@ const Routes: React.FC<RoutesProps> = ({ user }) => {
       <Route path="/login">
         <Login user={user} />
       </Route>
-      <RestrictedRoute path="/" user={user}>
+      <RestrictedRoute path="/authCallback" user={user}>
+        <AuthCallback />
+      </RestrictedRoute>
+      <RestrictedRoute exact path="/" user={user}>
         <Home user={user} />
       </RestrictedRoute>
+      <Redirect from="*" to="/" />
     </Switch>
   );
 };
