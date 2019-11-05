@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useHistory, Redirect } from 'react-router';
+import { Redirect } from 'react-router';
 import {
   Button,
   Grid,
@@ -25,7 +25,6 @@ type LoginProps = {
 
 export default function Login({ user }: LoginProps) {
   const classes = useStyles();
-  const history = useHistory();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
