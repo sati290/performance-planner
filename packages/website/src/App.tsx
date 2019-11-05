@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  useHistory,
+} from 'react-router-dom';
 import * as firebase from 'firebase/app';
 import './FirebaseInit';
 import TopBar from './components/TopBar';
@@ -8,6 +13,37 @@ import Login from './routes/Login';
 import { CircularProgress, Container } from '@material-ui/core';
 
 firebase.analytics();
+
+type RoutesProps = {
+  user: firebase.User | null;
+};
+
+const Routes: React.FC<RoutesProps> = ({ user }) => {
+  const history = useHistory();
+
+  useEffect(() => {
+    const unlisten = history.listen(location => {
+      console.log(location.pathname, location.search);
+
+      gtag('set', { page_path: location.pathname });
+      gtag('event', 'page_view');
+      //gtag('config', process.env.REACT_APP_MEASUREMENT_ID || '', {page_path: location.pathname});
+
+      return unlisten;
+    });
+  }, [history]);
+
+  return (
+    <Switch>
+      <Route path="/login">
+        <Login user={user} />
+      </Route>
+      <Route path="/">
+        <Home user={user} />
+      </Route>
+    </Switch>
+  );
+};
 
 const App: React.FC = () => {
   const [ready, setReady] = useState(false);
@@ -26,14 +62,7 @@ const App: React.FC = () => {
     <Router>
       <TopBar user={user} />
       {ready ? (
-        <Switch>
-          <Route path="/login">
-            <Login user={user} />
-          </Route>
-          <Route path="/">
-            <Home user={user} />
-          </Route>
-        </Switch>
+        <Routes user={user} />
       ) : (
         <Container maxWidth="xs">
           <CircularProgress />
