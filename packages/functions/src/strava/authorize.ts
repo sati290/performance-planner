@@ -1,3 +1,4 @@
+import * as functions from 'firebase-functions';
 import * as express from 'express';
 import * as cors from 'cors';
 import axios from 'axios';
@@ -17,8 +18,8 @@ app.post('/', (req, res) => {
   console.log('authorize code:', code, 'scope:', scope);
   axios
     .post('https://www.strava.com/oauth/token', {
-      client_id: 40447,
-      client_secret: '',
+      client_id: functions.config().strava.client_id,
+      client_secret: functions.config().strava.client_secret,
       code,
       grant_type: 'authorization_code',
     })
