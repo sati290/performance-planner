@@ -6,6 +6,8 @@ import * as passport from 'passport';
 import { Strategy } from 'passport-http-bearer';
 import axios from 'axios';
 
+const db = admin.firestore();
+
 passport.use(
   new Strategy((token, callback) => {
     admin
@@ -25,13 +27,13 @@ app.post(
   '/authorize',
   passport.authenticate('bearer', { session: false }),
   (req, res) => {
+    const { uid } = <any>req.user;
     const { code, scope } = req.body;
 
     if (!code || !scope) {
       res.sendStatus(400);
     }
 
-    console.log('authorize code:', code, 'scope:', scope);
     axios
       .post('https://www.strava.com/oauth/token', {
         client_id: functions.config().strava.client_id,
@@ -40,7 +42,19 @@ app.post(
         grant_type: 'authorization_code',
       })
       .then(response => {
-        console.log(response);
+        console.log(response.status);
+        console.log(response.data);
+
+        return db
+          .collection('users')
+          .doc(uid)
+          .collection('linkedProviders')
+          .doc('strava')
+          .set({
+            refresh_token: response.data.refresh_token,
+          });
+      })
+      .then(() => {
         res.sendStatus(200);
       })
       .catch(error => {
