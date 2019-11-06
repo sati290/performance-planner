@@ -20,8 +20,8 @@ const AuthCallback: React.FC = () => {
           .post(
             process.env.REACT_APP_API_ORIGIN + '/api/strava/authorize',
             {
-              code: query.code,
-              scope: query.scope,
+              code,
+              scope,
             },
             { headers: { Authorization: 'Bearer ' + token } }
           )
