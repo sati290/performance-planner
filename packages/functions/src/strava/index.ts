@@ -8,7 +8,7 @@ const app = express();
 app.use(cors({ origin: true }));
 app.use(express.json());
 
-app.post('/', (req, res) => {
+app.post('/authorize', (req, res) => {
   const { code, scope } = req.body;
 
   if (!code || !scope) {

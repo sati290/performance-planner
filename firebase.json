@@ -5,8 +5,8 @@
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {
-        "source": "/api/strava/authorize",
-        "function": "stravaAuthorize"
+        "source": "/api/**",
+        "function": "api"
       },
       {
         "source": "**",

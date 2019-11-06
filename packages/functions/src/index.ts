@@ -1,4 +1,9 @@
 import * as functions from 'firebase-functions';
-import stravaAuthorizeApp from './strava/authorize';
+import * as express from 'express';
+import stravaApp from './strava';
 
-export const stravaAuthorize = functions.https.onRequest(stravaAuthorizeApp);
+const app = express();
+
+app.use('/api/strava', stravaApp);
+
+export const api = functions.https.onRequest(app);
