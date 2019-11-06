@@ -6,8 +6,6 @@ import * as passport from 'passport';
 import { Strategy } from 'passport-http-bearer';
 import axios from 'axios';
 
-const db = admin.firestore();
-
 passport.use(
   new Strategy((token, callback) => {
     admin
@@ -26,41 +24,48 @@ app.use(express.json());
 app.post(
   '/authorize',
   passport.authenticate('bearer', { session: false }),
-  (req, res) => {
+  async (req, res) => {
     const { uid } = <any>req.user;
     const { code, scope } = req.body;
+    const { client_id, client_secret } = functions.config().strava;
 
     if (!code || !scope) {
       res.sendStatus(400);
     }
 
-    axios
-      .post('https://www.strava.com/oauth/token', {
-        client_id: functions.config().strava.client_id,
-        client_secret: functions.config().strava.client_secret,
-        code,
-        grant_type: 'authorization_code',
-      })
-      .then(response => {
-        console.log(response.status);
-        console.log(response.data);
+    try {
+      const authResponse = await axios.post(
+        'https://www.strava.com/oauth/token',
+        {
+          client_id,
+          client_secret,
+          code,
+          grant_type: 'authorization_code',
+        }
+      );
+      const {
+        access_token,
+        expires_at,
+        expires_in,
+        refresh_token,
+      } = authResponse.data;
 
-        return db
-          .collection('users')
-          .doc(uid)
-          .collection('linkedProviders')
-          .doc('strava')
-          .set({
-            refresh_token: response.data.refresh_token,
-          });
-      })
-      .then(() => {
-        res.sendStatus(200);
-      })
-      .catch(error => {
-        console.log('error:', error);
-        res.sendStatus(500);
-      });
+      await admin
+        .firestore()
+        .collection('users')
+        .doc(uid)
+        .collection('linkedProviders')
+        .doc('strava')
+        .set({
+          refresh_token,
+          scope,
+        });
+
+      res.json({ access_token, expires_at, expires_in });
+    } catch (error) {
+      console.error(error);
+      res.sendStatus(500);
+    }
   }
 );
 
