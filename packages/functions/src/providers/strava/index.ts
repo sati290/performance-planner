@@ -22,7 +22,7 @@ app.use(cors({ origin: true }));
 app.use(express.json());
 
 app.post(
-  '/authorize',
+  '/link',
   passport.authenticate('bearer', { session: false }),
   async (req, res) => {
     const { uid } = <any>req.user;

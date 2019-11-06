@@ -18,7 +18,8 @@ const AuthCallback: React.FC = () => {
       .then(token => {
         axios
           .post(
-            (process.env.REACT_APP_API_ORIGIN || '') + '/api/strava/authorize',
+            (process.env.REACT_APP_API_ORIGIN || '') +
+              '/api/providers/strava/link',
             {
               code,
               scope,
