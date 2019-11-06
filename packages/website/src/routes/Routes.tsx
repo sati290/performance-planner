@@ -15,8 +15,6 @@ const Routes: React.FC<RoutesProps> = ({ user }) => {
 
   useEffect(() => {
     const unlisten = history.listen(location => {
-      console.log(location.pathname, location.search);
-
       gtag('set', { page_path: location.pathname });
       gtag('event', 'page_view');
 

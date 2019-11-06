@@ -36,7 +36,6 @@ const Settings: React.FC<SettingsProps> = ({ user }) => {
     .collection('linkedProviders');
 
   const loadLinkedProviders = () => {
-    console.log('loading linked providers');
     linkedProvidersRef
       .get()
       .then(result => {
