@@ -3,7 +3,7 @@ import { Typography, Button } from '@material-ui/core';
 
 const authorizeParams = {
   client_id: process.env.REACT_APP_STRAVA_CLIENT_ID,
-  redirect_uri: window.location.origin + '/authCallback',
+  redirect_uri: window.location.origin + '/stravaAuthCallback',
   response_type: 'code',
   scope: process.env.REACT_APP_STRAVA_SCOPES,
 };

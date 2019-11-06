@@ -3,7 +3,7 @@ import { Switch, Route, useHistory, Redirect } from 'react-router-dom';
 import RestrictedRoute from '../components/RestrictedRoute';
 import Login from './Login';
 import Home from './Home';
-import AuthCallback from './AuthCallback';
+import AuthCallback from './StravaAuthCallback';
 
 type RoutesProps = {
   user: firebase.User | null;
@@ -28,7 +28,7 @@ const Routes: React.FC<RoutesProps> = ({ user }) => {
       <Route path="/login">
         <Login user={user} />
       </Route>
-      <RestrictedRoute path="/authCallback" user={user}>
+      <RestrictedRoute path="/stravaAuthCallback" user={user}>
         <AuthCallback />
       </RestrictedRoute>
       <RestrictedRoute exact path="/" user={user}>
