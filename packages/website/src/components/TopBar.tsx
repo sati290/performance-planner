@@ -7,6 +7,7 @@ import {
   makeStyles,
 } from '@material-ui/core';
 import * as firebase from 'firebase/app';
+import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -32,6 +33,12 @@ export default function TopBar({ user }: TopBarProps) {
         {user && (
           <>
             <Typography>{user.email}</Typography>
+            <Button
+              color="inherit"
+              component={props => <Link to="/settings" {...props} />}
+            >
+              Settings
+            </Button>
             <Button color="inherit" onClick={handleLogout}>
               Logout
             </Button>

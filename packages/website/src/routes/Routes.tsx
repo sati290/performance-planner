@@ -4,6 +4,7 @@ import RestrictedRoute from '../components/RestrictedRoute';
 import Login from './Login';
 import Home from './Home';
 import AuthCallback from './StravaAuthCallback';
+import Settings from './Settings';
 
 type RoutesProps = {
   user: firebase.User | null;
@@ -28,6 +29,9 @@ const Routes: React.FC<RoutesProps> = ({ user }) => {
       <Route path="/login">
         <Login user={user} />
       </Route>
+      <RestrictedRoute path="/settings" user={user}>
+        <Settings user={user!} />
+      </RestrictedRoute>
       <RestrictedRoute path="/stravaAuthCallback" user={user}>
         <AuthCallback />
       </RestrictedRoute>
