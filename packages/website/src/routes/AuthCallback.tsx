@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useLocation } from 'react-router';
 import { Typography } from '@material-ui/core';
+import * as firebase from 'firebase/app';
 import * as qs from 'querystring';
 import axios from 'axios';
 
@@ -9,24 +10,29 @@ const AuthCallback: React.FC = () => {
   const query = qs.parse(location.search);
 
   useEffect(() => {
-    console.log(
-      'auth callback effect, code:',
-      query.code,
-      'scope:',
-      query.scope
-    );
+    const { code, scope } = query;
 
-    axios
-      .post(process.env.REACT_APP_API_ORIGIN + '/api/strava/authorize', {
-        code: query.code,
-        scope: query.scope,
+    firebase
+      .auth()
+      .currentUser!.getIdToken(true)
+      .then(token => {
+        axios
+          .post(
+            process.env.REACT_APP_API_ORIGIN + '/api/strava/authorize',
+            {
+              code: query.code,
+              scope: query.scope,
+            },
+            { headers: { Authorization: 'Bearer ' + token } }
+          )
+          .then(response => {
+            console.log(response);
+          })
+          .catch(error => {
+            console.log(error);
+          });
       })
-      .then(response => {
-        console.log(response);
-      })
-      .catch(error => {
-        console.log(error);
-      });
+      .catch(error => console.log('token error:', error));
   });
 
   //return <Redirect to="/" />;
