@@ -6,6 +6,7 @@ import {
   Button,
   CssBaseline,
 } from '@material-ui/core';
+import { Link } from 'react-router-dom';
 
 const stravaAuthorizeParams = {
   client_id: process.env.REACT_APP_STRAVA_CLIENT_ID,
@@ -36,6 +37,7 @@ const Settings: React.FC<SettingsProps> = ({ user }) => {
     .collection('linkedProviders');
 
   const loadLinkedProviders = () => {
+    console.log('loading linked providers');
     linkedProvidersRef
       .get()
       .then(result => {
@@ -46,10 +48,8 @@ const Settings: React.FC<SettingsProps> = ({ user }) => {
   };
 
   useEffect(() => {
-    if (!state.loaded) {
-      loadLinkedProviders();
-    }
-  });
+    loadLinkedProviders();
+  }, [user]);
 
   const disconnectProvider = (providerName: string) => {
     linkedProvidersRef
@@ -64,6 +64,7 @@ const Settings: React.FC<SettingsProps> = ({ user }) => {
       <CssBaseline />
       {state.loaded ? (
         <>
+          <Link to="/">Back</Link>
           <Typography>Strava</Typography>
           {state.linkedProviders.some(p => p === 'strava') ? (
             <Button onClick={() => disconnectProvider('strava')}>
