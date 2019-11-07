@@ -4,7 +4,8 @@ import {
   CircularProgress,
   Typography,
   Button,
-  CssBaseline,
+  Grid,
+  Container,
 } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 
@@ -59,25 +60,47 @@ const Settings: React.FC<SettingsProps> = ({ user }) => {
       .catch(console.error);
   };
 
-  return (
-    <>
-      <CssBaseline />
-      {state.loaded ? (
-        <>
-          <Link to="/">Back</Link>
-          <Typography>Strava</Typography>
-          {state.linkedProviders.some(p => p === 'strava') ? (
-            <Button onClick={() => disconnectProvider('strava')}>
-              Disconnect
-            </Button>
-          ) : (
-            <Button href={stravaAuthorizeUrl}>Connect</Button>
-          )}
-        </>
-      ) : (
-        <CircularProgress />
-      )}
-    </>
+  return state.loaded ? (
+    <Container maxWidth="sm">
+      <Grid container direction="column">
+        <Grid
+          container
+          item
+          direction="row"
+          alignItems="center"
+          justify="space-between"
+        >
+          <Grid item>
+            <Typography variant="h2">Settings</Typography>
+          </Grid>
+          <Grid item>
+            <Link to="/">Back</Link>
+          </Grid>
+        </Grid>
+        <Grid
+          container
+          item
+          direction="row"
+          alignItems="center"
+          justify="space-between"
+        >
+          <Grid item>
+            <Typography>Strava</Typography>
+          </Grid>
+          <Grid item>
+            {state.linkedProviders.some(p => p === 'strava') ? (
+              <Button onClick={() => disconnectProvider('strava')}>
+                Disconnect
+              </Button>
+            ) : (
+              <Button href={stravaAuthorizeUrl}>Connect</Button>
+            )}
+          </Grid>
+        </Grid>
+      </Grid>
+    </Container>
+  ) : (
+    <CircularProgress />
   );
 };
 

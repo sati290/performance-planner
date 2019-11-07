@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { CircularProgress, Container } from '@material-ui/core';
+import { CircularProgress, Container, CssBaseline } from '@material-ui/core';
 import * as firebase from 'firebase/app';
 import './FirebaseInit';
 import TopBar from './components/TopBar';
@@ -22,16 +22,19 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <Router>
-      <TopBar user={user} />
-      {ready ? (
-        <Routes user={user} />
-      ) : (
-        <Container maxWidth="xs">
-          <CircularProgress />
-        </Container>
-      )}
-    </Router>
+    <>
+      <CssBaseline />
+      <Router>
+        <TopBar user={user} />
+        {ready ? (
+          <Routes user={user} />
+        ) : (
+          <Container maxWidth="xs">
+            <CircularProgress />
+          </Container>
+        )}
+      </Router>
+    </>
   );
 };
 
