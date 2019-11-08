@@ -20,6 +20,7 @@ const stravaAuthorizeParams = {
   redirect_uri: window.location.origin + '/stravaAuthCallback',
   response_type: 'code',
   scope: process.env.REACT_APP_STRAVA_SCOPES,
+  state: JSON.stringify({from: '/settings'})
 };
 const stravaAuthorizeQueryString = Object.entries(stravaAuthorizeParams)
   .map(([key, value]) => `${key}=${encodeURIComponent(value!)}`)

@@ -11,7 +11,10 @@ const AuthCallback: React.FC = () => {
   const query = qs.parse(location.search);
 
   useEffect(() => {
-    const { code, scope } = query;
+    const { code, scope, state } = query;
+    console.log('auth state:', state);
+    const {from} = JSON.parse((typeof state === 'string') ? state : '');
+    console.log(`auth callback code: ${code}, scope: ${scope}, from: ${from}`);
 
     firebase
       .auth()
