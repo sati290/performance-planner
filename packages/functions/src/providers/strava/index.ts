@@ -16,7 +16,7 @@ passport.use(
         console.log(
           `Id token verification failed with error code: '${error.code}'`
         );
-        if (error.code === 'auth/invalid-argument') {
+        if (error.code === 'auth/argument-error') {
           callback(null, false);
         } else {
           callback(error);
