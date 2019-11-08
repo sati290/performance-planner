@@ -33,7 +33,7 @@ const AuthCallback: React.FC = () => {
         history.replace(from);
       })
       .catch(console.error);
-  }, [query, history]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Container>
