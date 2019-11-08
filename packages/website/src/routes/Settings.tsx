@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import * as firebase from 'firebase/app';
 import {
   makeStyles,
@@ -13,20 +13,18 @@ import {
   ListItemText,
   ListItemSecondaryAction,
 } from '@material-ui/core';
+import * as qs from 'querystring';
 import stravaConnectImage from '../strava-connect-button.svg';
 
-const stravaAuthorizeParams = {
-  client_id: process.env.REACT_APP_STRAVA_CLIENT_ID,
-  redirect_uri: window.location.origin + '/stravaAuthCallback',
-  response_type: 'code',
-  scope: process.env.REACT_APP_STRAVA_SCOPES,
-  state: JSON.stringify({ from: '/settings' }),
-};
-const stravaAuthorizeQueryString = Object.entries(stravaAuthorizeParams)
-  .map(([key, value]) => `${key}=${encodeURIComponent(value!)}`)
-  .join('&');
 const stravaAuthorizeUrl =
-  'https://www.strava.com/oauth/authorize?' + stravaAuthorizeQueryString;
+  'https://www.strava.com/oauth/authorize?' +
+  qs.stringify({
+    client_id: process.env.REACT_APP_STRAVA_CLIENT_ID,
+    redirect_uri: window.location.origin + '/stravaAuthCallback',
+    response_type: 'code',
+    scope: process.env.REACT_APP_STRAVA_SCOPES,
+    state: JSON.stringify({ from: '/settings' }),
+  });
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -50,13 +48,17 @@ type SettingsState =
 const Settings: React.FC<SettingsProps> = ({ user }) => {
   const classes = useStyles();
   const [state, setState] = useState<SettingsState>({ loaded: false });
-  const linkedProvidersRef = firebase
-    .firestore()
-    .collection('users')
-    .doc(user.uid)
-    .collection('linkedProviders');
+  const linkedProvidersRef = useMemo(
+    () =>
+      firebase
+        .firestore()
+        .collection('users')
+        .doc(user.uid)
+        .collection('linkedProviders'),
+    [user.uid]
+  );
 
-  const loadLinkedProviders = () => {
+  const loadLinkedProviders = useCallback(() => {
     console.log('loading linked providers');
     linkedProvidersRef
       .get()
@@ -65,19 +67,16 @@ const Settings: React.FC<SettingsProps> = ({ user }) => {
         setState({ loaded: true, linkedProviders });
       })
       .catch(console.error);
-  };
+  }, [linkedProvidersRef]);
 
-  useEffect(() => {
-    loadLinkedProviders();
-  }, [user]);
+  useEffect(() => loadLinkedProviders(), [user, loadLinkedProviders]);
 
-  const disconnectProvider = (providerName: string) => {
+  const disconnectProvider = (providerName: string) =>
     linkedProvidersRef
       .doc(providerName)
       .delete()
       .then(loadLinkedProviders)
       .catch(console.error);
-  };
 
   return state.loaded ? (
     <Container maxWidth="md">
