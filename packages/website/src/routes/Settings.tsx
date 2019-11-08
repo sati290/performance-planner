@@ -5,11 +5,15 @@ import {
   CircularProgress,
   Typography,
   Button,
-  Grid,
+  ButtonBase,
   Container,
   Paper,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemSecondaryAction
 } from '@material-ui/core';
-import { Link } from 'react-router-dom';
+import stravaConnectImage from '../strava-connect-button.svg';
 
 const stravaAuthorizeParams = {
   client_id: process.env.REACT_APP_STRAVA_CLIENT_ID,
@@ -28,6 +32,10 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(3),
     padding: theme.spacing(2),
   },
+  stravaConnectImage: {
+      height: '48px',
+      width: 'auto'
+  }
 }));
 
 type SettingsProps = {
@@ -75,25 +83,20 @@ const Settings: React.FC<SettingsProps> = ({ user }) => {
       <Paper className={classes.paper}>
         <Typography variant="h4">Settings</Typography>
         <Typography variant="h6">Linked providers</Typography>
-        <Grid
-          container
-          direction="row"
-          alignItems="center"
-          justify="space-between"
-        >
-          <Grid item>
-            <Typography>Strava</Typography>
-          </Grid>
-          <Grid item>
-            {state.linkedProviders.some(p => p === 'strava') ? (
-              <Button onClick={() => disconnectProvider('strava')}>
-                Disconnect
-              </Button>
-            ) : (
-              <Button href={stravaAuthorizeUrl}>Connect</Button>
-            )}
-          </Grid>
-        </Grid>
+        <List>
+          <ListItem>
+            <ListItemText>Strava</ListItemText>
+            <ListItemSecondaryAction>
+              {state.linkedProviders.some(p => p === 'strava') ? (
+                <Button onClick={() => disconnectProvider('strava')}>
+                  Disconnect
+                </Button>
+              ) : (
+                <ButtonBase href={stravaAuthorizeUrl}><img src={stravaConnectImage} alt="" /></ButtonBase>
+              )}
+            </ListItemSecondaryAction>
+          </ListItem>
+        </List>
       </Paper>
     </Container>
   ) : (
