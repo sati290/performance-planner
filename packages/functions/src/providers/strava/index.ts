@@ -12,7 +12,16 @@ passport.use(
       .auth()
       .verifyIdToken(token)
       .then(decodedToken => callback(null, decodedToken))
-      .catch(error => callback(error));
+      .catch(error => {
+        console.log(
+          `Id token verification failed with error code: '${error.code}'`
+        );
+        if (error.code === 'auth/invalid-argument') {
+          callback(null, false);
+        } else {
+          callback(error);
+        }
+      });
   })
 );
 
