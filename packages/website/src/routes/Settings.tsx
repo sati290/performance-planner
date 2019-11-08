@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import * as firebase from 'firebase/app';
 import {
+  makeStyles,
   CircularProgress,
   Typography,
   Button,
   Grid,
   Container,
+  Paper,
 } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 
@@ -21,6 +23,13 @@ const stravaAuthorizeQueryString = Object.entries(stravaAuthorizeParams)
 const stravaAuthorizeUrl =
   'https://www.strava.com/oauth/authorize?' + stravaAuthorizeQueryString;
 
+const useStyles = makeStyles(theme => ({
+  paper: {
+    marginTop: theme.spacing(3),
+    padding: theme.spacing(2),
+  },
+}));
+
 type SettingsProps = {
   user: firebase.User;
 };
@@ -30,6 +39,7 @@ type SettingsState =
   | { loaded: true; linkedProviders: Array<string> };
 
 const Settings: React.FC<SettingsProps> = ({ user }) => {
+  const classes = useStyles();
   const [state, setState] = useState<SettingsState>({ loaded: false });
   const linkedProvidersRef = firebase
     .firestore()
@@ -61,25 +71,12 @@ const Settings: React.FC<SettingsProps> = ({ user }) => {
   };
 
   return state.loaded ? (
-    <Container maxWidth="sm">
-      <Grid container direction="column">
+    <Container maxWidth="md">
+      <Paper className={classes.paper}>
+        <Typography variant="h4">Settings</Typography>
+        <Typography variant="h6">Linked providers</Typography>
         <Grid
           container
-          item
-          direction="row"
-          alignItems="center"
-          justify="space-between"
-        >
-          <Grid item>
-            <Typography variant="h2">Settings</Typography>
-          </Grid>
-          <Grid item>
-            <Link to="/">Back</Link>
-          </Grid>
-        </Grid>
-        <Grid
-          container
-          item
           direction="row"
           alignItems="center"
           justify="space-between"
@@ -97,7 +94,7 @@ const Settings: React.FC<SettingsProps> = ({ user }) => {
             )}
           </Grid>
         </Grid>
-      </Grid>
+      </Paper>
     </Container>
   ) : (
     <CircularProgress />
