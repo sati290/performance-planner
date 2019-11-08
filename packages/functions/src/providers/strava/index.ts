@@ -31,6 +31,7 @@ app.post(
 
     if (!code || !scope) {
       res.sendStatus(400);
+      return;
     }
 
     try {
