@@ -11,7 +11,7 @@ import {
   List,
   ListItem,
   ListItemText,
-  ListItemSecondaryAction
+  ListItemSecondaryAction,
 } from '@material-ui/core';
 import stravaConnectImage from '../strava-connect-button.svg';
 
@@ -20,7 +20,7 @@ const stravaAuthorizeParams = {
   redirect_uri: window.location.origin + '/stravaAuthCallback',
   response_type: 'code',
   scope: process.env.REACT_APP_STRAVA_SCOPES,
-  state: JSON.stringify({from: '/settings'})
+  state: JSON.stringify({ from: '/settings' }),
 };
 const stravaAuthorizeQueryString = Object.entries(stravaAuthorizeParams)
   .map(([key, value]) => `${key}=${encodeURIComponent(value!)}`)
@@ -34,9 +34,9 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2),
   },
   stravaConnectImage: {
-      height: '48px',
-      width: 'auto'
-  }
+    height: '48px',
+    width: 'auto',
+  },
 }));
 
 type SettingsProps = {
@@ -93,7 +93,9 @@ const Settings: React.FC<SettingsProps> = ({ user }) => {
                   Disconnect
                 </Button>
               ) : (
-                <ButtonBase href={stravaAuthorizeUrl}><img src={stravaConnectImage} alt="" /></ButtonBase>
+                <ButtonBase href={stravaAuthorizeUrl}>
+                  <img src={stravaConnectImage} alt="" />
+                </ButtonBase>
               )}
             </ListItemSecondaryAction>
           </ListItem>

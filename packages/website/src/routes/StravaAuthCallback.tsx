@@ -8,13 +8,11 @@ import axios from 'axios';
 const AuthCallback: React.FC = () => {
   const location = useLocation();
   const history = useHistory();
-  const query = qs.parse(location.search);
+  const query = qs.parse(location.search.substring(1));
 
   useEffect(() => {
     const { code, scope, state } = query;
-    console.log('auth state:', state);
-    const {from} = JSON.parse((typeof state === 'string') ? state : '');
-    console.log(`auth callback code: ${code}, scope: ${scope}, from: ${from}`);
+    const from = typeof state === 'string' ? JSON.parse(state).from : '/';
 
     firebase
       .auth()
@@ -32,10 +30,10 @@ const AuthCallback: React.FC = () => {
       )
       .then(response => {
         console.log(response);
-        history.replace('/');
+        history.replace(from);
       })
       .catch(console.error);
-  });
+  }, [query, history]);
 
   return (
     <Container>
