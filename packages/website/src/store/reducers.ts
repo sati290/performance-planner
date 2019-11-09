@@ -1,8 +1,10 @@
+import { Reducer } from 'redux';
 import {
   State,
-  ActionTypes,
+  RESET_STORE,
   UPDATE_USER,
   UPDATE_LINKED_PROVIDERS,
+  ActionTypes,
 } from './types';
 
 const initialState: State = {
@@ -10,9 +12,9 @@ const initialState: State = {
   linkedProviders: { loaded: false },
 };
 
-const rootReducer = (
-  state: State = initialState,
-  action: ActionTypes
+const appReducer: Reducer<State, ActionTypes> = (
+  state = initialState,
+  action
 ): State => {
   switch (action.type) {
     case UPDATE_USER: {
@@ -30,6 +32,14 @@ const rootReducer = (
     }
     default:
       return state;
+  }
+};
+
+const rootReducer: Reducer<State, ActionTypes> = (state, action) => {
+  if (action.type === RESET_STORE) {
+    return appReducer(undefined, action);
+  } else {
+    return appReducer(state, action);
   }
 };
 

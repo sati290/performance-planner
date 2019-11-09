@@ -11,6 +11,12 @@ export type State = UserState & {
   linkedProviders: LinkedProvidersState;
 };
 
+export const RESET_STORE = 'RESET_STORE';
+
+interface ResetStoreAction {
+  type: typeof RESET_STORE;
+}
+
 export const UPDATE_USER = 'USER_CHANGE';
 
 interface UserChangeAction {
@@ -25,4 +31,7 @@ interface UpdateLinkedProvidersAction {
   data: LinkedProviderData;
 }
 
-export type ActionTypes = UserChangeAction | UpdateLinkedProvidersAction;
+export type ActionTypes =
+  | ResetStoreAction
+  | UserChangeAction
+  | UpdateLinkedProvidersAction;
