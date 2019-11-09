@@ -10,7 +10,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import * as firebase from 'firebase/app';
-import { State } from '../store/reducers';
+import { State } from '../store/types';
 
 const useStyles = makeStyles(theme => ({
   container: {

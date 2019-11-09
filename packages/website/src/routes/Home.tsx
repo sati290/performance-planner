@@ -1,7 +1,7 @@
 import React from 'react';
-import { Typography } from '@material-ui/core';
 import { useSelector } from 'react-redux';
-import { State } from '../store/reducers';
+import { Typography } from '@material-ui/core';
+import { State } from '../store/types';
 
 const Home: React.FC = () => {
   const email = useSelector((state: State) =>

@@ -1,10 +1,4 @@
-import { ActionTypes, USER_CHANGE } from './actions';
-
-export type UserState =
-  | { userPending: true }
-  | { userPending: false; user: firebase.User | null };
-
-export type State = UserState;
+import { State, ActionTypes, USER_CHANGE } from './types';
 
 const initialState: State = {
   userPending: true,

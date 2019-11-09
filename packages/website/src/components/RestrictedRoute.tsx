@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, RouteProps, Redirect } from 'react-router';
 import { useSelector } from 'react-redux';
-import { State } from '../store/reducers';
+import { State } from '../store/types';
 
 const RestrictedRoute: React.FC<RouteProps> = ({ children, ...rest }) => {
   const userLoggedIn = useSelector((state: State) =>

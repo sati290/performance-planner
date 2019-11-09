@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import * as firebase from 'firebase/app';
 import {
   makeStyles,
@@ -14,9 +15,8 @@ import {
 } from '@material-ui/core';
 import * as qs from 'querystring';
 import stravaConnectImage from '../strava-connect-button.svg';
+import { State } from '../store/types';
 import Loading from '../components/Loading';
-import { useSelector } from 'react-redux';
-import { State } from '../store/reducers';
 
 const stravaAuthorizeUrl =
   'https://www.strava.com/oauth/authorize?' +

@@ -7,7 +7,7 @@ import {
   Button,
   makeStyles,
 } from '@material-ui/core';
-import { State } from '../store/reducers';
+import { State } from '../store/types';
 import * as firebase from 'firebase/app';
 import RouterButton from '../components/RouterButton';
 import RouterLink from '../components/RouterLink';

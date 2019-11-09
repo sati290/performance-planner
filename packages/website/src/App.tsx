@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { CssBaseline } from '@material-ui/core';
 import * as firebase from 'firebase/app';
 import './FirebaseInit';
-import { State } from './store/reducers';
+import { State } from './store/types';
 import { userChangeAction } from './store/actions';
 import TopBar from './components/TopBar';
 import Loading from './components/Loading';
