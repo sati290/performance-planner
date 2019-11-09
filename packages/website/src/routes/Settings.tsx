@@ -57,7 +57,6 @@ const Settings: React.FC<SettingsProps> = ({ user }) => {
         .collection('linkedProviders'),
     [user.uid]
   );
-  console.log('settings state:', JSON.stringify(state));
 
   const loadLinkedProviders = useCallback(() => {
     console.log('loading linked providers');
