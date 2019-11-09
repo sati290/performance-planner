@@ -4,6 +4,7 @@ import { Typography, Container } from '@material-ui/core';
 import * as firebase from 'firebase/app';
 import * as qs from 'querystring';
 import axios from 'axios';
+import Loading from '../components/Loading';
 
 const AuthCallback: React.FC = () => {
   const location = useLocation();
@@ -35,11 +36,7 @@ const AuthCallback: React.FC = () => {
       .catch(console.error);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  return (
-    <Container>
-      <Typography>Authorizing...</Typography>
-    </Container>
-  );
+  return <Loading />;
 };
 
 export default AuthCallback;
