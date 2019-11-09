@@ -1,9 +1,12 @@
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware, Middleware } from 'redux';
 import { createLogger } from 'redux-logger';
 import rootReducer from './reducers';
 
-const loggerMiddleware = createLogger();
+let middleware: Array<Middleware> = [];
+if (process.env.NODE_ENV !== 'production') {
+  middleware = [createLogger(), ...middleware];
+}
 
-const store = createStore(rootReducer, applyMiddleware(loggerMiddleware));
+const store = createStore(rootReducer, applyMiddleware(...middleware));
 
 export default store;
