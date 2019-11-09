@@ -6,6 +6,31 @@ import * as passport from 'passport';
 import { Strategy } from 'passport-http-bearer';
 import axios from 'axios';
 
+const { client_id, client_secret } = functions.config().strava;
+
+type StravaTokenAPIParams =
+  | { grant_type: 'authorization_code'; code: string }
+  | { grant_type: 'refresh_token'; refresh_token: string };
+
+const callStravaTokenAPI = (params: StravaTokenAPIParams) =>
+  axios.post('https://www.strava.com/oauth/token', {
+    client_id,
+    client_secret,
+    ...params,
+  });
+
+const storeAuthInfo = (uid: string, refresh_token: string, scope?: string) =>
+  admin
+    .firestore()
+    .collection('users')
+    .doc(uid)
+    .collection('linkedProviders')
+    .doc('strava')
+    .set({
+      refresh_token,
+      scope,
+    });
+
 passport.use(
   new Strategy((token, callback) => {
     admin
@@ -39,7 +64,6 @@ router.post(
   async (req, res) => {
     const { uid } = <any>req.user;
     const { code, scope } = req.body;
-    const { client_id, client_secret } = functions.config().strava;
 
     if (!code || !scope) {
       res.sendStatus(400);
@@ -47,32 +71,60 @@ router.post(
     }
 
     try {
-      const authResponse = await axios.post(
-        'https://www.strava.com/oauth/token',
-        {
-          client_id,
-          client_secret,
-          code,
-          grant_type: 'authorization_code',
-        }
-      );
+      const stravaResponse = await callStravaTokenAPI({
+        grant_type: 'authorization_code',
+        code,
+      });
       const {
         access_token,
         expires_at,
         expires_in,
         refresh_token,
-      } = authResponse.data;
+      } = stravaResponse.data;
 
-      await admin
+      await storeAuthInfo(uid, refresh_token, scope);
+
+      res.json({ access_token, expires_at, expires_in });
+    } catch (error) {
+      console.error(error);
+      res.sendStatus(500);
+    }
+  }
+);
+
+router.get(
+  '/token',
+  passport.authenticate('bearer', { session: false }),
+  async (req, res) => {
+    const { uid } = <any>req.user;
+
+    try {
+      const doc = await admin
         .firestore()
         .collection('users')
         .doc(uid)
         .collection('linkedProviders')
         .doc('strava')
-        .set({
-          refresh_token,
-          scope,
-        });
+        .get();
+
+      if (!doc.exists) {
+        res.sendStatus(404);
+        return;
+      }
+
+      const refresh_token = doc.get('refresh_token');
+      const stravaResponse = await callStravaTokenAPI({
+        grant_type: 'refresh_token',
+        refresh_token,
+      });
+      const {
+        access_token,
+        expires_at,
+        expires_in,
+        refresh_token: new_refresh_token,
+      } = stravaResponse.data;
+
+      await storeAuthInfo(uid, new_refresh_token);
 
       res.json({ access_token, expires_at, expires_in });
     } catch (error) {
