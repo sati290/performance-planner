@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
 
 const TopBar: React.FC = () => {
   const user = useSelector((state: State) =>
-    state.userPending ? null : state.user
+    !state.user.pending && state.user.loggedIn ? state.user.data : null
   );
   const classes = useStyles();
 

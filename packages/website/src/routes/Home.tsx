@@ -5,7 +5,7 @@ import { State } from '../store/types';
 
 const Home: React.FC = () => {
   const email = useSelector((state: State) =>
-    state.userPending ? '' : state.user ? state.user.email : ''
+    !state.user.pending && state.user.loggedIn ? state.user.data.email : ''
   );
 
   return <Typography>Hello {email}!</Typography>;

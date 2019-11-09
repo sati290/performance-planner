@@ -22,8 +22,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Login: React.FC = () => {
-  const userLoggedIn = useSelector((state: State) =>
-    state.userPending ? false : !!state.user
+  const userLoggedIn = useSelector(
+    (state: State) => !state.user.pending && state.user.loggedIn
   );
   const classes = useStyles();
 

@@ -43,7 +43,8 @@ const useStyles = makeStyles(theme => ({
 const Settings: React.FC = () => {
   const classes = useStyles();
   const { uid, linkedProvidersState } = useSelector((state: State) => ({
-    uid: state.userPending ? '' : state.user!.uid,
+    uid:
+      (!state.user.pending && state.user.loggedIn && state.user.data.uid) || '',
     linkedProvidersState: state.linkedProviders,
   }));
   const dispatch = useDispatch();

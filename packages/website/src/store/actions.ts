@@ -14,7 +14,7 @@ export const updateUser = (
   user: firebase.User | null
 ): ThunkAction<void, State, null, Action> => (dispatch, getState) => {
   const state = getState();
-  if (!state.userPending && state.user) {
+  if (!state.user.pending && state.user) {
     dispatch(resetStore());
   }
 

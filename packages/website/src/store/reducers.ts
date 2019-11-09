@@ -8,7 +8,7 @@ import {
 } from './types';
 
 const initialState: State = {
-  userPending: true,
+  user: { pending: true },
   linkedProviders: { loaded: false },
 };
 
@@ -20,8 +20,13 @@ const appReducer: Reducer<State, ActionTypes> = (
     case UPDATE_USER: {
       return {
         ...state,
-        userPending: false,
-        user: action.user,
+        user: action.user
+          ? {
+              pending: false,
+              loggedIn: true,
+              data: { uid: action.user.uid, email: action.user.email || '' },
+            }
+          : { pending: false, loggedIn: false },
       };
     }
     case UPDATE_LINKED_PROVIDERS: {

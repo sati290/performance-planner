@@ -13,7 +13,7 @@ import Routes from './routes/Routes';
 firebase.analytics();
 
 const App: React.FC = () => {
-  const userPending = useSelector((state: State) => state.userPending);
+  const userPending = useSelector((state: State) => state.user.pending);
   const dispatch = useDispatch();
 
   useEffect(() => {

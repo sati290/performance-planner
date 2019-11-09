@@ -1,15 +1,21 @@
+interface UserData {
+  uid: string;
+  email: string;
+}
 type UserState =
-  | { userPending: true }
-  | { userPending: false; user: firebase.User | null };
+  | { pending: true }
+  | { pending: false; loggedIn: false }
+  | { pending: false; loggedIn: true; data: UserData };
 
 export type LinkedProviderData = Array<string>;
 type LinkedProvidersState =
   | { loaded: false }
   | { loaded: true; data: LinkedProviderData };
 
-export type State = UserState & {
+export interface State {
+  user: UserState;
   linkedProviders: LinkedProvidersState;
-};
+}
 
 export const RESET_STORE = 'RESET_STORE';
 
