@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useCallback, useMemo } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import * as firebase from 'firebase/app';
 import {
   makeStyles,
@@ -16,6 +16,7 @@ import {
 import * as qs from 'querystring';
 import stravaConnectImage from '../strava-connect-button.svg';
 import { State } from '../store/types';
+import { updateLinkedProviders } from '../store/actions';
 import Loading from '../components/Loading';
 
 const stravaAuthorizeUrl =
@@ -39,16 +40,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type SettingsState =
-  | { loaded: false }
-  | { loaded: true; linkedProviders: Array<string> };
-
 const Settings: React.FC = () => {
   const classes = useStyles();
-  const uid = useSelector((state: State) =>
-    state.userPending ? '' : state.user!.uid
-  );
-  const [state, setState] = useState<SettingsState>({ loaded: false });
+  const { uid, linkedProvidersState } = useSelector((state: State) => ({
+    uid: state.userPending ? '' : state.user!.uid,
+    linkedProvidersState: state.linkedProviders,
+  }));
+  const dispatch = useDispatch();
   const linkedProvidersRef = useMemo(
     () =>
       firebase
@@ -65,10 +63,10 @@ const Settings: React.FC = () => {
       .get()
       .then(result => {
         const linkedProviders = result.docs.map(doc => doc.id);
-        setState({ loaded: true, linkedProviders });
+        dispatch(updateLinkedProviders(linkedProviders));
       })
       .catch(console.error);
-  }, [linkedProvidersRef]);
+  }, [dispatch, linkedProvidersRef]);
 
   useEffect(() => loadLinkedProviders(), [loadLinkedProviders]);
 
@@ -79,7 +77,7 @@ const Settings: React.FC = () => {
       .then(loadLinkedProviders)
       .catch(console.error);
 
-  return state.loaded ? (
+  return linkedProvidersState.loaded ? (
     <Container maxWidth="md">
       <Paper className={classes.paper}>
         <Typography variant="h4">Settings</Typography>
@@ -88,7 +86,7 @@ const Settings: React.FC = () => {
           <ListItem>
             <ListItemText>Strava</ListItemText>
             <ListItemSecondaryAction>
-              {state.linkedProviders.some(p => p === 'strava') ? (
+              {linkedProvidersState.data.some(p => p === 'strava') ? (
                 <Button onClick={() => disconnectProvider('strava')}>
                   Disconnect
                 </Button>

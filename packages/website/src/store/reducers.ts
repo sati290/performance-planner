@@ -1,7 +1,13 @@
-import { State, ActionTypes, USER_CHANGE } from './types';
+import {
+  State,
+  ActionTypes,
+  UPDATE_USER,
+  UPDATE_LINKED_PROVIDERS,
+} from './types';
 
 const initialState: State = {
   userPending: true,
+  linkedProviders: { loaded: false },
 };
 
 const rootReducer = (
@@ -9,11 +15,17 @@ const rootReducer = (
   action: ActionTypes
 ): State => {
   switch (action.type) {
-    case USER_CHANGE: {
+    case UPDATE_USER: {
       return {
         ...state,
         userPending: false,
         user: action.user,
+      };
+    }
+    case UPDATE_LINKED_PROVIDERS: {
+      return {
+        ...state,
+        linkedProviders: { loaded: true, data: action.data },
       };
     }
     default:

@@ -1,8 +1,16 @@
-import { USER_CHANGE } from './types';
+import {
+  UPDATE_USER,
+  UPDATE_LINKED_PROVIDERS,
+  LinkedProviderData,
+} from './types';
 
-export const userChangeAction = (user: firebase.User | null) => {
+export const updateUser = (user: firebase.User | null) => {
   return {
-    type: USER_CHANGE,
+    type: UPDATE_USER,
     user,
   };
+};
+
+export const updateLinkedProviders = (data: LinkedProviderData) => {
+  return { type: UPDATE_LINKED_PROVIDERS, data };
 };
