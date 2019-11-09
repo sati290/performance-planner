@@ -8,10 +8,12 @@ import {
 } from '@material-ui/core';
 import * as firebase from 'firebase/app';
 import RouterButton from '../components/RouterButton';
+import RouterLink from '../components/RouterLink';
 
 const useStyles = makeStyles(theme => ({
   title: {
     flexGrow: 1,
+    textTransform: 'uppercase',
   },
 }));
 
@@ -29,7 +31,11 @@ export default function TopBar({ user }: TopBarProps) {
   return (
     <AppBar position="static">
       <Toolbar>
-        <Typography className={classes.title}>PERFORMANCE PLANNER</Typography>
+        <Typography variant="h6" className={classes.title}>
+          <RouterLink to="/" color="inherit" underline="none">
+            Performance Planner
+          </RouterLink>
+        </Typography>
         {user && (
           <>
             <Typography>{user.email}</Typography>
