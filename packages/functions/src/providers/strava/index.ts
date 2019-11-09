@@ -25,12 +25,12 @@ passport.use(
   })
 );
 
-const app = express();
+const router = express.Router();
 
-app.use(cors({ origin: true }));
-app.use(express.json());
+router.use(cors({ origin: true }));
+router.use(express.json());
 
-app.post(
+router.post(
   '/link',
   passport.authenticate('bearer', { session: false }),
   async (req, res) => {
@@ -79,4 +79,4 @@ app.post(
   }
 );
 
-export default app;
+export default router;
