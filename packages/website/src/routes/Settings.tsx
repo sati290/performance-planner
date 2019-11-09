@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import * as firebase from 'firebase/app';
 import {
   makeStyles,
-  CircularProgress,
   Typography,
   Button,
   ButtonBase,
@@ -15,6 +14,7 @@ import {
 } from '@material-ui/core';
 import * as qs from 'querystring';
 import stravaConnectImage from '../strava-connect-button.svg';
+import Loading from '../components/Loading';
 
 const stravaAuthorizeUrl =
   'https://www.strava.com/oauth/authorize?' +
@@ -57,6 +57,7 @@ const Settings: React.FC<SettingsProps> = ({ user }) => {
         .collection('linkedProviders'),
     [user.uid]
   );
+  console.log('settings state:', JSON.stringify(state));
 
   const loadLinkedProviders = useCallback(() => {
     console.log('loading linked providers');
@@ -102,7 +103,7 @@ const Settings: React.FC<SettingsProps> = ({ user }) => {
       </Paper>
     </Container>
   ) : (
-    <CircularProgress />
+    <Loading />
   );
 };
 

@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { CircularProgress, Container, CssBaseline } from '@material-ui/core';
+import { CssBaseline } from '@material-ui/core';
 import * as firebase from 'firebase/app';
 import './FirebaseInit';
 import TopBar from './components/TopBar';
+import Loading from './components/Loading';
 import Routes from './routes/Routes';
 
 firebase.analytics();
 
+type AppState = { ready: false } | { ready: true; user: firebase.User | null };
+
 const App: React.FC = () => {
-  const [ready, setReady] = useState(false);
-  const [user, setUser] = useState<firebase.User | null>(null);
+  const [state, setState] = useState<AppState>({ ready: false });
 
   useEffect(() => {
     const unsubscribe = firebase.auth().onAuthStateChanged(user => {
-      setUser(user);
-      setReady(true);
+      setState({ ready: true, user });
     });
 
     return unsubscribe;
@@ -25,14 +26,8 @@ const App: React.FC = () => {
     <>
       <CssBaseline />
       <Router>
-        <TopBar user={user} />
-        {ready ? (
-          <Routes user={user} />
-        ) : (
-          <Container maxWidth="xs">
-            <CircularProgress />
-          </Container>
-        )}
+        <TopBar user={state.ready ? state.user : null} />
+        {state.ready ? <Routes user={state.user} /> : <Loading />}
       </Router>
     </>
   );
