@@ -5,15 +5,15 @@ import { Link, LinkProps } from 'react-router-dom';
 
 type RouterLinkProps = MaterialLinkProps & LinkProps;
 
-const RouterLink: React.FC<RouterLinkProps> = props => {
+const RouterLink: React.FC<RouterLinkProps> = ({ children, ...rest }) => {
   return (
     <MaterialLink
       component={forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => (
         <Link innerRef={ref} {...props} />
       ))}
-      {...props}
+      {...rest}
     >
-      {props.children}
+      {children}
     </MaterialLink>
   );
 };

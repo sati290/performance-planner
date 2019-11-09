@@ -4,15 +4,15 @@ import { Link, LinkProps } from 'react-router-dom';
 
 type RouterButtonProps = ButtonProps & LinkProps;
 
-const RouterButton: React.FC<RouterButtonProps> = props => {
+const RouterButton: React.FC<RouterButtonProps> = ({ children, ...rest }) => {
   return (
     <Button
       component={forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => (
         <Link innerRef={ref} {...props} />
       ))}
-      {...props}
+      {...rest}
     >
-      {props.children}
+      {children}
     </Button>
   );
 };
