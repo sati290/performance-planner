@@ -4,8 +4,10 @@ import { Typography } from '@material-ui/core';
 import { State } from '../store/types';
 
 const Home: React.FC = () => {
-  const email = useSelector((state: State) =>
-    !state.user.pending && state.user.loggedIn ? state.user.data.email : ''
+  const email = useSelector(
+    (state: State) =>
+      (!state.user.pending && state.user.loggedIn && state.user.data.email) ||
+      ''
   );
 
   return <Typography>Hello {email}!</Typography>;
