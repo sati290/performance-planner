@@ -78,7 +78,7 @@ router.post(
         refresh_token,
       } = stravaResponse.data;
 
-      await getProviderDocRef(uid).set({ refresh_token, code });
+      await getProviderDocRef(uid).set({ refresh_token, scope });
 
       res.json({ access_token, expires_at, expires_in });
     } catch (error) {
