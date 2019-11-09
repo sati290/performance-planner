@@ -6,11 +6,7 @@ import Home from './Home';
 import AuthCallback from './StravaAuthCallback';
 import Settings from './Settings';
 
-type RoutesProps = {
-  user: firebase.User | null;
-};
-
-const Routes: React.FC<RoutesProps> = ({ user }) => {
+const Routes: React.FC = () => {
   const history = useHistory();
 
   useEffect(() => {
@@ -25,16 +21,16 @@ const Routes: React.FC<RoutesProps> = ({ user }) => {
   return (
     <Switch>
       <Route path="/login">
-        <Login user={user} />
+        <Login />
       </Route>
-      <RestrictedRoute path="/settings" user={user}>
-        <Settings user={user!} />
+      <RestrictedRoute path="/settings">
+        <Settings />
       </RestrictedRoute>
-      <RestrictedRoute path="/stravaAuthCallback" user={user}>
+      <RestrictedRoute path="/stravaAuthCallback">
         <AuthCallback />
       </RestrictedRoute>
-      <RestrictedRoute exact path="/" user={user}>
-        <Home user={user} />
+      <RestrictedRoute exact path="/">
+        <Home />
       </RestrictedRoute>
       <Redirect from="*" to="/" />
     </Switch>

@@ -15,6 +15,8 @@ import {
 import * as qs from 'querystring';
 import stravaConnectImage from '../strava-connect-button.svg';
 import Loading from '../components/Loading';
+import { useSelector } from 'react-redux';
+import { State } from '../store/reducers';
 
 const stravaAuthorizeUrl =
   'https://www.strava.com/oauth/authorize?' +
@@ -37,25 +39,24 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type SettingsProps = {
-  user: firebase.User;
-};
-
 type SettingsState =
   | { loaded: false }
   | { loaded: true; linkedProviders: Array<string> };
 
-const Settings: React.FC<SettingsProps> = ({ user }) => {
+const Settings: React.FC = () => {
   const classes = useStyles();
+  const uid = useSelector((state: State) =>
+    state.userPending ? '' : state.user!.uid
+  );
   const [state, setState] = useState<SettingsState>({ loaded: false });
   const linkedProvidersRef = useMemo(
     () =>
       firebase
         .firestore()
         .collection('users')
-        .doc(user.uid)
+        .doc(uid)
         .collection('linkedProviders'),
-    [user.uid]
+    [uid]
   );
 
   const loadLinkedProviders = useCallback(() => {
@@ -69,7 +70,7 @@ const Settings: React.FC<SettingsProps> = ({ user }) => {
       .catch(console.error);
   }, [linkedProvidersRef]);
 
-  useEffect(() => loadLinkedProviders(), [user, loadLinkedProviders]);
+  useEffect(() => loadLinkedProviders(), [loadLinkedProviders]);
 
   const disconnectProvider = (providerName: string) =>
     linkedProvidersRef

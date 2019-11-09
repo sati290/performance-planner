@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import {
   AppBar,
   Toolbar,
@@ -6,6 +7,7 @@ import {
   Button,
   makeStyles,
 } from '@material-ui/core';
+import { State } from '../store/reducers';
 import * as firebase from 'firebase/app';
 import RouterButton from '../components/RouterButton';
 import RouterLink from '../components/RouterLink';
@@ -17,11 +19,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type TopBarProps = {
-  user: firebase.User | null;
-};
-
-export default function TopBar({ user }: TopBarProps) {
+const TopBar: React.FC = () => {
+  const user = useSelector((state: State) =>
+    state.userPending ? null : state.user
+  );
   const classes = useStyles();
 
   function handleLogout() {
@@ -50,4 +51,6 @@ export default function TopBar({ user }: TopBarProps) {
       </Toolbar>
     </AppBar>
   );
-}
+};
+
+export default TopBar;

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Redirect } from 'react-router';
+import { useSelector } from 'react-redux';
 import {
   Button,
   Grid,
@@ -9,6 +10,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import * as firebase from 'firebase/app';
+import { State } from '../store/reducers';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -19,11 +21,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type LoginProps = {
-  user: firebase.User | any;
-};
-
-export default function Login({ user }: LoginProps) {
+const Login: React.FC = () => {
+  const userLoggedIn = useSelector((state: State) =>
+    state.userPending ? false : !!state.user
+  );
   const classes = useStyles();
 
   const [email, setEmail] = useState('');
@@ -39,7 +40,7 @@ export default function Login({ user }: LoginProps) {
       .catch(console.log);
   }
 
-  return user ? (
+  return userLoggedIn ? (
     <Redirect to="/" />
   ) : (
     <Container maxWidth="xs" className={classes.container}>
@@ -82,4 +83,6 @@ export default function Login({ user }: LoginProps) {
       </Grid>
     </Container>
   );
-}
+};
+
+export default Login;

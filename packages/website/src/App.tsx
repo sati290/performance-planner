@@ -1,33 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import { CssBaseline } from '@material-ui/core';
 import * as firebase from 'firebase/app';
 import './FirebaseInit';
+import { State } from './store/reducers';
+import { userChangeAction } from './store/actions';
 import TopBar from './components/TopBar';
 import Loading from './components/Loading';
 import Routes from './routes/Routes';
 
 firebase.analytics();
 
-type AppState = { ready: false } | { ready: true; user: firebase.User | null };
-
 const App: React.FC = () => {
-  const [state, setState] = useState<AppState>({ ready: false });
+  const userPending = useSelector((state: State) => state.userPending);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const unsubscribe = firebase.auth().onAuthStateChanged(user => {
-      setState({ ready: true, user });
+      dispatch(userChangeAction(user));
     });
 
     return unsubscribe;
-  }, []);
+  }, [dispatch]);
 
   return (
     <>
       <CssBaseline />
       <Router>
-        <TopBar user={state.ready ? state.user : null} />
-        {state.ready ? <Routes user={state.user} /> : <Loading />}
+        <TopBar />
+        {userPending ? <Loading /> : <Routes />}
       </Router>
     </>
   );
