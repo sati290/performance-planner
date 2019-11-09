@@ -23,7 +23,7 @@ interface ResetStoreAction {
   type: typeof RESET_STORE;
 }
 
-export const UPDATE_USER = 'USER_CHANGE';
+export const UPDATE_USER = 'UPDATE_USER';
 
 interface UserChangeAction {
   type: typeof UPDATE_USER;
