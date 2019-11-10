@@ -11,6 +11,7 @@ import Loading from './components/Loading';
 import Routes from './routes/Routes';
 
 firebase.analytics();
+firebase.performance();
 
 const App: React.FC = () => {
   const userPending = useSelector((state: State) => state.user.pending);
