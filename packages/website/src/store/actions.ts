@@ -65,10 +65,11 @@ export const getStravaAPIToken = (): ThunkAction<
   null,
   Action
 > => async (dispatch, getState) => {
-  if (
-    !getState().stravaAPIToken ||
-    getState().stravaAPIToken.expiresAt - Date.now() / 1000 < 600
-  ) {
+  const refreshThreshold = Date.now() / 1000 + 600;
+  const {
+    stravaAPIToken: { accessToken, expiresAt },
+  } = getState();
+  if (!accessToken || expiresAt < refreshThreshold) {
     await dispatch(fetchStravaAPIToken());
   }
 
