@@ -1,6 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Typography, Button } from '@material-ui/core';
+import { Action } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
+import {
+  Typography,
+  Button,
+  Table,
+  TableBody,
+  TableRow,
+  TableCell,
+  TableHead,
+} from '@material-ui/core';
+import axios from 'axios';
 import { State } from '../store/types';
 import { getStravaAPIToken } from '../store/actions';
 
@@ -11,19 +22,46 @@ const Home: React.FC = () => {
       ''
   );
 
-  const dispatch = useDispatch();
-  const stravaToken = useSelector((state: State) => state.stravaAPIToken);
+  const dispatch = useDispatch<ThunkDispatch<State, null, Action>>();
+  const [activities, setActivities] = useState<Array<any>>([]);
+  const fetchActivities = () => {
+    dispatch(getStravaAPIToken())
+      .then(token =>
+        axios.get('https://www.strava.com/api/v3/athlete/activities', {
+          headers: { Authorization: 'Bearer ' + token },
+        })
+      )
+      .then(response => setActivities(response.data));
+  };
 
   return (
     <>
       <Typography>Hello {email}!</Typography>
-      <Typography>
-        Your strava token is: {stravaToken.accessToken}, and it expires at:{' '}
-        {stravaToken.expiresAt}
-      </Typography>
-      <Button onClick={() => dispatch(getStravaAPIToken())}>
-        Refresh token
-      </Button>
+      <Button onClick={fetchActivities}>Fetch activities</Button>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>id</TableCell>
+            <TableCell>name</TableCell>
+            <TableCell>type</TableCell>
+            <TableCell>start_date</TableCell>
+            <TableCell>distance</TableCell>
+            <TableCell>average_heartrate</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {activities.map(activity => (
+            <TableRow key={activity.id}>
+              <TableCell>{activity.id}</TableCell>
+              <TableCell>{activity.name}</TableCell>
+              <TableCell>{activity.type}</TableCell>
+              <TableCell>{activity.start_date}</TableCell>
+              <TableCell>{activity.distance}</TableCell>
+              <TableCell>{activity.average_heartrate}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </>
   );
 };
