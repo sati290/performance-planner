@@ -1,11 +1,15 @@
 import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
+import * as firebase from 'firebase/app';
+import axios from 'axios';
 import {
   LinkedProviderData,
+  StravaAPIToken,
   State,
   RESET_STORE,
   UPDATE_USER,
   UPDATE_LINKED_PROVIDERS,
+  UPDATE_STRAVA_API_TOKEN,
 } from './types';
 
 export const resetStore = () => ({ type: RESET_STORE });
@@ -29,4 +33,44 @@ export const updateUser = (
 
 export const updateLinkedProviders = (data: LinkedProviderData) => {
   return { type: UPDATE_LINKED_PROVIDERS, data };
+};
+
+export const updateStravaAPIToken = (data: StravaAPIToken) => {
+  return { type: UPDATE_STRAVA_API_TOKEN, data };
+};
+
+export const fetchStravaAPIToken = (): ThunkAction<
+  Promise<void>,
+  State,
+  null,
+  Action
+> => async dispatch => {
+  const firebaseToken = await firebase.auth().currentUser!.getIdToken(true);
+  const response = await axios.get(
+    (process.env.REACT_APP_API_ORIGIN || '') + '/api/providers/strava/token',
+    { headers: { Authorization: 'Bearer ' + firebaseToken } }
+  );
+
+  dispatch(
+    updateStravaAPIToken({
+      accessToken: response.data.access_token,
+      expiresAt: response.data.expires_at,
+    })
+  );
+};
+
+export const getStravaAPIToken = (): ThunkAction<
+  Promise<string>,
+  State,
+  null,
+  Action
+> => async (dispatch, getState) => {
+  if (
+    !getState().stravaAPIToken ||
+    getState().stravaAPIToken.expiresAt - Date.now() / 1000 < 600
+  ) {
+    await dispatch(fetchStravaAPIToken());
+  }
+
+  return getState().stravaAPIToken.accessToken;
 };

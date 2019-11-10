@@ -4,12 +4,14 @@ import {
   RESET_STORE,
   UPDATE_USER,
   UPDATE_LINKED_PROVIDERS,
+  UPDATE_STRAVA_API_TOKEN,
   ActionTypes,
 } from './types';
 
 const initialState: State = {
   user: { pending: true },
   linkedProviders: { loaded: false },
+  stravaAPIToken: { accessToken: '', expiresAt: 0 },
 };
 
 const appReducer: Reducer<State, ActionTypes> = (
@@ -33,6 +35,12 @@ const appReducer: Reducer<State, ActionTypes> = (
       return {
         ...state,
         linkedProviders: { loaded: true, data: action.data },
+      };
+    }
+    case UPDATE_STRAVA_API_TOKEN: {
+      return {
+        ...state,
+        stravaAPIToken: action.data,
       };
     }
     default:

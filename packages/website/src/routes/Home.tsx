@@ -1,7 +1,8 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { Typography } from '@material-ui/core';
+import { useSelector, useDispatch } from 'react-redux';
+import { Typography, Button } from '@material-ui/core';
 import { State } from '../store/types';
+import { getStravaAPIToken } from '../store/actions';
 
 const Home: React.FC = () => {
   const email = useSelector(
@@ -10,7 +11,21 @@ const Home: React.FC = () => {
       ''
   );
 
-  return <Typography>Hello {email}!</Typography>;
+  const dispatch = useDispatch();
+  const stravaToken = useSelector((state: State) => state.stravaAPIToken);
+
+  return (
+    <>
+      <Typography>Hello {email}!</Typography>
+      <Typography>
+        Your strava token is: {stravaToken.accessToken}, and it expires at:{' '}
+        {stravaToken.expiresAt}
+      </Typography>
+      <Button onClick={() => dispatch(getStravaAPIToken())}>
+        Refresh token
+      </Button>
+    </>
+  );
 };
 
 export default Home;

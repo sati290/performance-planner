@@ -12,9 +12,16 @@ type LinkedProvidersState =
   | { loaded: false }
   | { loaded: true; data: LinkedProviderData };
 
+export interface StravaAPIToken {
+  accessToken: string;
+  expiresAt: number;
+}
+type StravaAPITokenState = StravaAPIToken;
+
 export interface State {
   user: UserState;
   linkedProviders: LinkedProvidersState;
+  stravaAPIToken: StravaAPITokenState;
 }
 
 export const RESET_STORE = 'RESET_STORE';
@@ -37,7 +44,15 @@ interface UpdateLinkedProvidersAction {
   data: LinkedProviderData;
 }
 
+export const UPDATE_STRAVA_API_TOKEN = 'UPDATE_STRAVA_API_TOKEN';
+
+interface UpdateStravaAPITokenAction {
+  type: typeof UPDATE_STRAVA_API_TOKEN;
+  data: StravaAPIToken;
+}
+
 export type ActionTypes =
   | ResetStoreAction
   | UserChangeAction
-  | UpdateLinkedProvidersAction;
+  | UpdateLinkedProvidersAction
+  | UpdateStravaAPITokenAction;

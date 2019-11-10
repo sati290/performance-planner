@@ -1,11 +1,14 @@
 import React, { useEffect } from 'react';
 import { useLocation, useHistory } from 'react-router';
+import { useDispatch } from 'react-redux';
 import * as firebase from 'firebase/app';
 import * as qs from 'querystring';
 import axios from 'axios';
+import { updateStravaAPIToken } from '../store/actions';
 import Loading from '../components/Loading';
 
 const AuthCallback: React.FC = () => {
+  const dispatch = useDispatch();
   const location = useLocation();
   const history = useHistory();
   const query = qs.parse(location.search.substring(1));
@@ -29,7 +32,12 @@ const AuthCallback: React.FC = () => {
         )
       )
       .then(response => {
-        console.log(response);
+        dispatch(
+          updateStravaAPIToken({
+            accessToken: response.data.access_token,
+            expiresAt: response.data.expires_at,
+          })
+        );
         history.replace(from);
       })
       .catch(console.error);
