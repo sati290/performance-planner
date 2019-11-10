@@ -71,16 +71,16 @@ router.post(
         grant_type: 'authorization_code',
         code,
       });
-      const {
+      const { access_token, expires_at, refresh_token } = stravaResponse.data;
+
+      await getProviderDocRef(uid).set({
         access_token,
         expires_at,
-        expires_in,
         refresh_token,
-      } = stravaResponse.data;
+        scope,
+      });
 
-      await getProviderDocRef(uid).set({ refresh_token, scope });
-
-      res.json({ access_token, expires_at, expires_in });
+      res.json({ access_token, expires_at });
     } catch (error) {
       console.error(error);
       res.sendStatus(500);
@@ -95,37 +95,31 @@ router.get(
     const { uid } = <any>req.user;
 
     try {
-      const doc = await admin
-        .firestore()
-        .collection('users')
-        .doc(uid)
-        .collection('linkedProviders')
-        .doc('strava')
-        .get();
+      const docRef = getProviderDocRef(uid);
+      const doc = await docRef.get();
 
       if (!doc.exists) {
         res.sendStatus(404);
         return;
       }
 
-      const refresh_token = doc.get('refresh_token');
-      const stravaResponse = await callStravaTokenAPI({
-        grant_type: 'refresh_token',
-        refresh_token,
-      });
-      const {
-        access_token,
-        expires_at,
-        expires_in,
-        refresh_token: new_refresh_token,
-      } = stravaResponse.data;
+      let { access_token, expires_at, refresh_token } = doc.data()!;
 
-      await getProviderDocRef(uid).set(
-        { refresh_token: new_refresh_token },
-        { merge: true }
-      );
+      const refreshThreshold = Date.now() / 1000 + 1800;
+      if (!access_token || !expires_at || expires_at < refreshThreshold) {
+        const stravaResponse = await callStravaTokenAPI({
+          grant_type: 'refresh_token',
+          refresh_token,
+        });
+        ({ access_token, expires_at, refresh_token } = stravaResponse.data);
 
-      res.json({ access_token, expires_at, expires_in });
+        await getProviderDocRef(uid).set(
+          { access_token, expires_at, refresh_token },
+          { merge: true }
+        );
+      }
+
+      res.json({ access_token, expires_at });
     } catch (error) {
       console.error(error);
       res.sendStatus(500);
