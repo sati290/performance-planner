@@ -13,7 +13,7 @@ const Sync: React.FC = () => {
   const fetchActivityPage = (page: number) =>
     dispatch(getStravaAPIToken()).then(token =>
       axios.get('https://www.strava.com/api/v3/athlete/activities', {
-        params: { page, per_page: 100 },
+        params: { page, per_page: 200 },
         headers: { Authorization: 'Bearer ' + token },
       })
     );
