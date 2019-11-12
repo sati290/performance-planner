@@ -31,7 +31,7 @@ const TopBar: React.FC = () => {
 
   return (
     <AppBar position="static">
-      <Toolbar>
+      <Toolbar variant="dense">
         <Typography variant="h6" className={classes.title}>
           <RouterLink to="/" color="inherit" underline="none">
             Performance Planner
@@ -40,6 +40,9 @@ const TopBar: React.FC = () => {
         {user && (
           <>
             <Typography>{user.email}</Typography>
+            <RouterButton color="inherit" to="/sync">
+              Sync
+            </RouterButton>
             <RouterButton color="inherit" to="/settings">
               Settings
             </RouterButton>

@@ -5,6 +5,7 @@ import Login from './Login';
 import Home from './Home';
 import AuthCallback from './StravaAuthCallback';
 import Settings from './Settings';
+import Sync from './Sync';
 
 const Routes: React.FC = () => {
   const history = useHistory();
@@ -23,6 +24,9 @@ const Routes: React.FC = () => {
       <Route path="/login">
         <Login />
       </Route>
+      <RestrictedRoute path="/sync">
+        <Sync />
+      </RestrictedRoute>
       <RestrictedRoute path="/settings">
         <Settings />
       </RestrictedRoute>
