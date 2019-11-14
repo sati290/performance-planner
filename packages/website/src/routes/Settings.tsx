@@ -12,6 +12,9 @@ import {
   ListItem,
   ListItemText,
   ListItemSecondaryAction,
+  TextField,
+  Grid,
+  MenuItem,
 } from '@material-ui/core';
 import * as qs from 'querystring';
 import stravaConnectImage from '../strava-connect-button.svg';
@@ -31,8 +34,11 @@ const stravaAuthorizeUrl =
 
 const useStyles = makeStyles(theme => ({
   paper: {
-    marginTop: theme.spacing(3),
     padding: theme.spacing(2),
+  },
+  sectionTitle: {
+    marginTop: theme.spacing(5),
+    marginBottom: theme.spacing(2),
   },
   stravaConnectImage: {
     height: '48px',
@@ -80,9 +86,33 @@ const Settings: React.FC = () => {
 
   return linkedProvidersState.loaded ? (
     <Container maxWidth="md">
+      <Typography variant="h4">Settings</Typography>
+      <Typography variant="h6" className={classes.sectionTitle}>
+        Athlete data
+      </Typography>
       <Paper className={classes.paper}>
-        <Typography variant="h4">Settings</Typography>
-        <Typography variant="h6">Linked providers</Typography>
+        <Grid container direction="column" spacing={2}>
+          <Grid item>
+            <TextField select label="Gender" fullWidth>
+              <MenuItem>Male</MenuItem>
+              <MenuItem>Female</MenuItem>
+            </TextField>
+          </Grid>
+          <Grid item xs>
+            <TextField label="Resting HR" fullWidth />
+          </Grid>
+          <Grid item xs>
+            <TextField label="Max HR" fullWidth />
+          </Grid>
+          <Grid item xs>
+            <TextField label="LTHR" fullWidth />
+          </Grid>
+        </Grid>
+      </Paper>
+      <Typography variant="h6" className={classes.sectionTitle}>
+        Linked providers
+      </Typography>
+      <Paper className={classes.paper}>
         <List>
           <ListItem>
             <ListItemText>Strava</ListItemText>
