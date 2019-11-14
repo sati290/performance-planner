@@ -35,6 +35,45 @@ export const updateLinkedProviders = (data: LinkedProviderData) => {
   return { type: UPDATE_LINKED_PROVIDERS, data };
 };
 
+export const fetchLinkedProviders = (): ThunkAction<
+  void,
+  State,
+  null,
+  Action
+> => (dispatch, getState) => {
+  const { user } = getState();
+  const uid = !user.pending && user.loggedIn && user.data.uid;
+  if (uid) {
+    firebase
+      .firestore()
+      .collection('users')
+      .doc(uid)
+      .collection('linkedProviders')
+      .get()
+      .then(result => result.docs.map(doc => doc.id))
+      .then(linkedProviders => dispatch(updateLinkedProviders(linkedProviders)))
+      .catch(console.error);
+  }
+};
+
+export const disconnectLinkedProvider = (
+  name: string
+): ThunkAction<void, State, null, Action> => (dispatch, getState) => {
+  const { user } = getState();
+  const uid = !user.pending && user.loggedIn && user.data.uid;
+  if (uid) {
+    firebase
+      .firestore()
+      .collection('users')
+      .doc(uid)
+      .collection('linkedProviders')
+      .doc(name)
+      .delete()
+      .then(() => dispatch(fetchLinkedProviders()))
+      .catch(console.error);
+  }
+};
+
 export const updateStravaAPIToken = (data: StravaAPIToken) => {
   return { type: UPDATE_STRAVA_API_TOKEN, data };
 };
