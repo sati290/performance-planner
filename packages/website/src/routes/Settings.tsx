@@ -35,6 +35,9 @@ const stravaAuthorizeUrl =
   });
 
 const useStyles = makeStyles(theme => ({
+  pageTile: {
+    marginTop: theme.spacing(2),
+  },
   paper: {
     padding: theme.spacing(2),
   },
@@ -61,7 +64,9 @@ const Settings: React.FC = () => {
 
   return linkedProvidersState.loaded ? (
     <Container maxWidth="md">
-      <Typography variant="h4">Settings</Typography>
+      <Typography variant="h4" className={classes.pageTile}>
+        Settings
+      </Typography>
       <Typography variant="h6" className={classes.sectionTitle}>
         Athlete data
       </Typography>
