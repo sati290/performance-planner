@@ -11,9 +11,6 @@ import {
   ListItem,
   ListItemText,
   ListItemSecondaryAction,
-  TextField,
-  Grid,
-  MenuItem,
 } from '@material-ui/core';
 import * as qs from 'querystring';
 import stravaConnectImage from '../strava-connect-button.svg';
@@ -23,6 +20,7 @@ import {
   disconnectLinkedProvider,
 } from '../store/actions';
 import Loading from '../components/Loading';
+import AthleteDataForm from '../components/AthleteDataForm';
 
 const stravaAuthorizeUrl =
   'https://www.strava.com/oauth/authorize?' +
@@ -53,10 +51,11 @@ const useStyles = makeStyles(theme => ({
 
 const Settings: React.FC = () => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+
   const linkedProvidersState = useSelector(
     (state: State) => state.linkedProviders
   );
-  const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(fetchLinkedProviders());
@@ -71,23 +70,7 @@ const Settings: React.FC = () => {
         Athlete data
       </Typography>
       <Paper className={classes.paper}>
-        <Grid container direction="column" spacing={2}>
-          <Grid item>
-            <TextField select label="Gender" fullWidth>
-              <MenuItem>Male</MenuItem>
-              <MenuItem>Female</MenuItem>
-            </TextField>
-          </Grid>
-          <Grid item xs>
-            <TextField label="Resting HR" fullWidth />
-          </Grid>
-          <Grid item xs>
-            <TextField label="Max HR" fullWidth />
-          </Grid>
-          <Grid item xs>
-            <TextField label="LTHR" fullWidth />
-          </Grid>
-        </Grid>
+        <AthleteDataForm />
       </Paper>
       <Typography variant="h6" className={classes.sectionTitle}>
         Linked providers
