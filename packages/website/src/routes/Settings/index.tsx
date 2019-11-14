@@ -13,14 +13,14 @@ import {
   ListItemSecondaryAction,
 } from '@material-ui/core';
 import * as qs from 'querystring';
-import stravaConnectImage from '../strava-connect-button.svg';
-import { State } from '../store/types';
+import stravaConnectImage from './strava-connect-button.svg';
+import { State } from '../../store/types';
 import {
   fetchLinkedProviders,
   disconnectLinkedProvider,
-} from '../store/actions';
-import Loading from '../components/Loading';
-import AthleteDataForm from '../components/AthleteDataForm';
+} from '../../store/actions';
+import Loading from '../../components/Loading';
+import AthleteDataForm from './AthleteDataForm';
 
 const stravaAuthorizeUrl =
   'https://www.strava.com/oauth/authorize?' +

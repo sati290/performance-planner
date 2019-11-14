@@ -8,7 +8,7 @@ import { State } from './store/types';
 import { updateUser } from './store/actions';
 import TopBar from './components/TopBar';
 import Loading from './components/Loading';
-import Routes from './routes/Routes';
+import Routes from './routes';
 
 firebase.analytics();
 firebase.performance();
