@@ -61,7 +61,7 @@ const Settings: React.FC = () => {
     dispatch(fetchLinkedProviders());
   }, [dispatch]);
 
-  return linkedProvidersState.loaded ? (
+  return (
     <Container maxWidth="md">
       <Typography variant="h4" className={classes.pageTile}>
         Settings
@@ -76,28 +76,30 @@ const Settings: React.FC = () => {
         Linked providers
       </Typography>
       <Paper className={classes.paper}>
-        <List>
-          <ListItem>
-            <ListItemText>Strava</ListItemText>
-            <ListItemSecondaryAction>
-              {linkedProvidersState.data.some(p => p === 'strava') ? (
-                <Button
-                  onClick={() => dispatch(disconnectLinkedProvider('strava'))}
-                >
-                  Disconnect
-                </Button>
-              ) : (
-                <ButtonBase href={stravaAuthorizeUrl}>
-                  <img src={stravaConnectImage} alt="" />
-                </ButtonBase>
-              )}
-            </ListItemSecondaryAction>
-          </ListItem>
-        </List>
+        {linkedProvidersState.loaded ? (
+          <List>
+            <ListItem>
+              <ListItemText>Strava</ListItemText>
+              <ListItemSecondaryAction>
+                {linkedProvidersState.data.some(p => p === 'strava') ? (
+                  <Button
+                    onClick={() => dispatch(disconnectLinkedProvider('strava'))}
+                  >
+                    Disconnect
+                  </Button>
+                ) : (
+                  <ButtonBase href={stravaAuthorizeUrl}>
+                    <img src={stravaConnectImage} alt="" />
+                  </ButtonBase>
+                )}
+              </ListItemSecondaryAction>
+            </ListItem>
+          </List>
+        ) : (
+          <Loading />
+        )}
       </Paper>
     </Container>
-  ) : (
-    <Loading />
   );
 };
 
