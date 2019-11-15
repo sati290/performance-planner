@@ -4,6 +4,9 @@ service cloud.firestore {
   	match /users/{userId}/linkedProviders/{provider} {
     	allow read, delete: if userId == request.auth.uid;
     }
+    match /athleteData/{userId} {
+      allow read, write:  if userId == request.auth.uid;
+    }
     match /{document=**} {
       allow read, write: if false;
     }

@@ -7,6 +7,15 @@ type UserState =
   | { pending: false; loggedIn: false }
   | { pending: false; loggedIn: true; data: UserData };
 
+export interface AthleteData {
+  gender: '' | 'male' | 'female';
+  restingHR: number;
+  maxHR: number;
+  lthr: number;
+}
+
+type AthleteDataState = { loaded: false } | { loaded: true; data: AthleteData };
+
 export type LinkedProviderData = Array<string>;
 type LinkedProvidersState =
   | { loaded: false }
@@ -20,6 +29,7 @@ type StravaAPITokenState = StravaAPIToken;
 
 export interface State {
   user: UserState;
+  athleteData: AthleteDataState;
   linkedProviders: LinkedProvidersState;
   stravaAPIToken: StravaAPITokenState;
 }
@@ -32,9 +42,16 @@ interface ResetStoreAction {
 
 export const UPDATE_USER = 'UPDATE_USER';
 
-interface UserChangeAction {
+interface UpdateUserAction {
   type: typeof UPDATE_USER;
   user: firebase.User | null;
+}
+
+export const RECEIVE_ATHLETE_DATA = 'RECEIVE_ATHLETE_DATA';
+
+interface ReceiveAthleteDataAction {
+  type: typeof RECEIVE_ATHLETE_DATA;
+  data: AthleteData;
 }
 
 export const UPDATE_LINKED_PROVIDERS = 'UPDATE_LINKED_PROVIDERS';
@@ -53,6 +70,7 @@ interface UpdateStravaAPITokenAction {
 
 export type ActionTypes =
   | ResetStoreAction
-  | UserChangeAction
+  | UpdateUserAction
+  | ReceiveAthleteDataAction
   | UpdateLinkedProvidersAction
   | UpdateStravaAPITokenAction;

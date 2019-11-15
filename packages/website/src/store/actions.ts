@@ -3,11 +3,13 @@ import { ThunkAction } from 'redux-thunk';
 import * as firebase from 'firebase/app';
 import axios from 'axios';
 import {
+  AthleteData,
   LinkedProviderData,
   StravaAPIToken,
   State,
   RESET_STORE,
   UPDATE_USER,
+  RECEIVE_ATHLETE_DATA,
   UPDATE_LINKED_PROVIDERS,
   UPDATE_STRAVA_API_TOKEN,
 } from './types';
@@ -31,6 +33,60 @@ export const updateUser = (
   });
 };
 
+export const selectUserId = (state: State) => {
+  const { user } = state;
+  return (!user.pending && user.loggedIn && user.data.uid) || null;
+};
+
+export const receiveAthleteData = (data: AthleteData) => {
+  return { type: RECEIVE_ATHLETE_DATA, data };
+};
+
+export const fetchAthleteData = (): ThunkAction<void, State, null, Action> => (
+  dispatch,
+  getState
+) => {
+  const uid = selectUserId(getState());
+  if (uid) {
+    firebase
+      .firestore()
+      .collection('athleteData')
+      .doc(uid)
+      .get()
+      .then(doc => {
+        if (doc.exists) {
+          const { gender, restingHR, maxHR, lthr } = doc.data()!;
+          dispatch(receiveAthleteData({ gender, restingHR, maxHR, lthr }));
+        } else {
+          dispatch(
+            updateAthleteData({
+              gender: '',
+              restingHR: 60,
+              maxHR: 190,
+              lthr: 170,
+            })
+          );
+        }
+      })
+      .catch(console.error);
+  }
+};
+
+export const updateAthleteData = (
+  data: AthleteData
+): ThunkAction<void, State, null, Action> => (dispatch, getState) => {
+  const uid = selectUserId(getState());
+  if (uid) {
+    firebase
+      .firestore()
+      .collection('athleteData')
+      .doc(uid)
+      .set(data)
+      .then(() => dispatch(receiveAthleteData(data)))
+      .catch(console.error);
+  }
+};
+
 export const updateLinkedProviders = (data: LinkedProviderData) => {
   return { type: UPDATE_LINKED_PROVIDERS, data };
 };
@@ -41,8 +97,7 @@ export const fetchLinkedProviders = (): ThunkAction<
   null,
   Action
 > => (dispatch, getState) => {
-  const { user } = getState();
-  const uid = !user.pending && user.loggedIn && user.data.uid;
+  const uid = selectUserId(getState());
   if (uid) {
     firebase
       .firestore()
@@ -59,8 +114,7 @@ export const fetchLinkedProviders = (): ThunkAction<
 export const disconnectLinkedProvider = (
   name: string
 ): ThunkAction<void, State, null, Action> => (dispatch, getState) => {
-  const { user } = getState();
-  const uid = !user.pending && user.loggedIn && user.data.uid;
+  const uid = selectUserId(getState());
   if (uid) {
     firebase
       .firestore()

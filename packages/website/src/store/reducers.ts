@@ -3,6 +3,7 @@ import {
   State,
   RESET_STORE,
   UPDATE_USER,
+  RECEIVE_ATHLETE_DATA,
   UPDATE_LINKED_PROVIDERS,
   UPDATE_STRAVA_API_TOKEN,
   ActionTypes,
@@ -10,6 +11,7 @@ import {
 
 const initialState: State = {
   user: { pending: true },
+  athleteData: { loaded: false },
   linkedProviders: { loaded: false },
   stravaAPIToken: { accessToken: '', expiresAt: 0 },
 };
@@ -29,6 +31,12 @@ const appReducer: Reducer<State, ActionTypes> = (
               data: { uid: action.user.uid, email: action.user.email || '' },
             }
           : { pending: false, loggedIn: false },
+      };
+    }
+    case RECEIVE_ATHLETE_DATA: {
+      return {
+        ...state,
+        athleteData: { loaded: true, data: action.data },
       };
     }
     case UPDATE_LINKED_PROVIDERS: {

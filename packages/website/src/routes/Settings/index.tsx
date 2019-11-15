@@ -16,6 +16,7 @@ import * as qs from 'querystring';
 import stravaConnectImage from './strava-connect-button.svg';
 import { State } from '../../store/types';
 import {
+  fetchAthleteData,
   fetchLinkedProviders,
   disconnectLinkedProvider,
 } from '../../store/actions';
@@ -53,11 +54,13 @@ const Settings: React.FC = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const linkedProvidersState = useSelector(
-    (state: State) => state.linkedProviders
-  );
+  const { linkedProvidersState, athleteData } = useSelector((state: State) => ({
+    linkedProvidersState: state.linkedProviders,
+    athleteData: state.athleteData.loaded ? state.athleteData.data : null,
+  }));
 
   useEffect(() => {
+    dispatch(fetchAthleteData());
     dispatch(fetchLinkedProviders());
   }, [dispatch]);
 
@@ -70,7 +73,11 @@ const Settings: React.FC = () => {
         Athlete data
       </Typography>
       <Paper className={classes.paper}>
-        <AthleteDataForm />
+        {athleteData ? (
+          <AthleteDataForm athleteData={athleteData} />
+        ) : (
+          <Loading />
+        )}
       </Paper>
       <Typography variant="h6" className={classes.sectionTitle}>
         Linked providers

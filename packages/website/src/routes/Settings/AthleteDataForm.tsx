@@ -1,32 +1,31 @@
-import React, { useState, useMemo, ChangeEvent } from 'react';
+import React, { useState, useMemo, ChangeEvent, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { Grid, TextField, MenuItem, Button } from '@material-ui/core';
+import { AthleteData } from '../../store/types';
+import { updateAthleteData } from '../../store/actions';
 
-type AthleteData = {
-  gender: string;
-  restingHR: number | null;
-  maxHR: number | null;
-  lthr: number | null;
-};
+interface AthleteDataFormProps {
+  athleteData: AthleteData;
+}
 
-const AthleteDataForm: React.FC = () => {
-  const initState: AthleteData = {
-    gender: '',
-    restingHR: null,
-    maxHR: null,
-    lthr: null,
-  };
-  const [state, setState] = useState<AthleteData>(initState);
+const AthleteDataForm: React.FC<AthleteDataFormProps> = ({ athleteData }) => {
+  const dispatch = useDispatch();
+  const [state, setState] = useState(athleteData);
+
+  useEffect(() => {
+    setState(athleteData);
+  }, [athleteData]);
 
   const dataChanged = useMemo(
-    () => JSON.stringify(initState) === JSON.stringify(state),
-    [state, initState]
+    () => JSON.stringify(athleteData) === JSON.stringify(state),
+    [state, athleteData]
   );
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
+    const { name, value, type } = event.target;
     setState(prevState => ({
       ...prevState,
-      [name]: value,
+      [name]: type === 'number' ? Number(value) : value,
     }));
   };
 
@@ -49,6 +48,7 @@ const AthleteDataForm: React.FC = () => {
         <TextField
           type="number"
           name="restingHR"
+          value={state.restingHR}
           onChange={handleChange}
           label="Resting HR"
           fullWidth
@@ -58,6 +58,7 @@ const AthleteDataForm: React.FC = () => {
         <TextField
           type="number"
           name="maxHR"
+          value={state.maxHR}
           onChange={handleChange}
           label="Max HR"
           fullWidth
@@ -67,6 +68,7 @@ const AthleteDataForm: React.FC = () => {
         <TextField
           type="number"
           name="lthr"
+          value={state.lthr}
           onChange={handleChange}
           label="LTHR"
           fullWidth
@@ -75,7 +77,12 @@ const AthleteDataForm: React.FC = () => {
       <Grid item xs>
         <Grid container justify="flex-end">
           <Grid item>
-            <Button disabled={dataChanged} variant="contained" color="primary">
+            <Button
+              disabled={dataChanged}
+              onClick={() => dispatch(updateAthleteData(state))}
+              variant="contained"
+              color="primary"
+            >
               Save
             </Button>
           </Grid>
