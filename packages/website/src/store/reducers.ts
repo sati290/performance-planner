@@ -4,8 +4,8 @@ import {
   RESET_STORE,
   UPDATE_USER,
   RECEIVE_ATHLETE_DATA,
-  UPDATE_LINKED_PROVIDERS,
-  UPDATE_STRAVA_API_TOKEN,
+  RECEIVE_LINKED_PROVIDERS,
+  RECEIVE_STRAVA_API_TOKEN,
   ActionTypes,
 } from './types';
 
@@ -39,13 +39,13 @@ const appReducer: Reducer<State, ActionTypes> = (
         athleteData: { loaded: true, data: action.data },
       };
     }
-    case UPDATE_LINKED_PROVIDERS: {
+    case RECEIVE_LINKED_PROVIDERS: {
       return {
         ...state,
         linkedProviders: { loaded: true, data: action.data },
       };
     }
-    case UPDATE_STRAVA_API_TOKEN: {
+    case RECEIVE_STRAVA_API_TOKEN: {
       return {
         ...state,
         stravaAPIToken: action.data,

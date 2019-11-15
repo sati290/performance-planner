@@ -54,17 +54,17 @@ interface ReceiveAthleteDataAction {
   data: AthleteData;
 }
 
-export const UPDATE_LINKED_PROVIDERS = 'UPDATE_LINKED_PROVIDERS';
+export const RECEIVE_LINKED_PROVIDERS = 'RECEIVE_LINKED_PROVIDERS';
 
-interface UpdateLinkedProvidersAction {
-  type: typeof UPDATE_LINKED_PROVIDERS;
+interface ReceiveLinkedProvidersAction {
+  type: typeof RECEIVE_LINKED_PROVIDERS;
   data: LinkedProviderData;
 }
 
-export const UPDATE_STRAVA_API_TOKEN = 'UPDATE_STRAVA_API_TOKEN';
+export const RECEIVE_STRAVA_API_TOKEN = 'RECEIVE_STRAVA_API_TOKEN';
 
-interface UpdateStravaAPITokenAction {
-  type: typeof UPDATE_STRAVA_API_TOKEN;
+interface ReceiveStravaAPITokenAction {
+  type: typeof RECEIVE_STRAVA_API_TOKEN;
   data: StravaAPIToken;
 }
 
@@ -72,5 +72,5 @@ export type ActionTypes =
   | ResetStoreAction
   | UpdateUserAction
   | ReceiveAthleteDataAction
-  | UpdateLinkedProvidersAction
-  | UpdateStravaAPITokenAction;
+  | ReceiveLinkedProvidersAction
+  | ReceiveStravaAPITokenAction;

@@ -10,8 +10,8 @@ import {
   RESET_STORE,
   UPDATE_USER,
   RECEIVE_ATHLETE_DATA,
-  UPDATE_LINKED_PROVIDERS,
-  UPDATE_STRAVA_API_TOKEN,
+  RECEIVE_LINKED_PROVIDERS,
+  RECEIVE_STRAVA_API_TOKEN,
 } from './types';
 
 export const resetStore = () => ({ type: RESET_STORE });
@@ -87,8 +87,8 @@ export const updateAthleteData = (
   }
 };
 
-export const updateLinkedProviders = (data: LinkedProviderData) => {
-  return { type: UPDATE_LINKED_PROVIDERS, data };
+export const receiveLinkedProviders = (data: LinkedProviderData) => {
+  return { type: RECEIVE_LINKED_PROVIDERS, data };
 };
 
 export const fetchLinkedProviders = (): ThunkAction<
@@ -106,7 +106,9 @@ export const fetchLinkedProviders = (): ThunkAction<
       .collection('linkedProviders')
       .get()
       .then(result => result.docs.map(doc => doc.id))
-      .then(linkedProviders => dispatch(updateLinkedProviders(linkedProviders)))
+      .then(linkedProviders =>
+        dispatch(receiveLinkedProviders(linkedProviders))
+      )
       .catch(console.error);
   }
 };
@@ -128,8 +130,8 @@ export const disconnectLinkedProvider = (
   }
 };
 
-export const updateStravaAPIToken = (data: StravaAPIToken) => {
-  return { type: UPDATE_STRAVA_API_TOKEN, data };
+export const receiveStravaAPIToken = (data: StravaAPIToken) => {
+  return { type: RECEIVE_STRAVA_API_TOKEN, data };
 };
 
 export const fetchStravaAPIToken = (): ThunkAction<
@@ -145,7 +147,7 @@ export const fetchStravaAPIToken = (): ThunkAction<
   );
 
   dispatch(
-    updateStravaAPIToken({
+    receiveStravaAPIToken({
       accessToken: response.data.access_token,
       expiresAt: response.data.expires_at,
     })
