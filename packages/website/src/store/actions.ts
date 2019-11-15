@@ -48,11 +48,14 @@ export const fetchAthleteData = (): ThunkAction<void, State, null, Action> => (
 ) => {
   const uid = selectUserId(getState());
   if (uid) {
-    firebase
-      .firestore()
-      .collection('athleteData')
-      .doc(uid)
-      .get()
+    import('firebase/firestore')
+      .then(() =>
+        firebase
+          .firestore()
+          .collection('athleteData')
+          .doc(uid)
+          .get()
+      )
       .then(doc => {
         if (doc.exists) {
           const { gender, restingHR, maxHR, lthr } = doc.data()!;
@@ -77,11 +80,14 @@ export const updateAthleteData = (
 ): ThunkAction<void, State, null, Action> => (dispatch, getState) => {
   const uid = selectUserId(getState());
   if (uid) {
-    firebase
-      .firestore()
-      .collection('athleteData')
-      .doc(uid)
-      .set(data)
+    import('firebase/firestore')
+      .then(() =>
+        firebase
+          .firestore()
+          .collection('athleteData')
+          .doc(uid)
+          .set(data)
+      )
       .then(() => dispatch(receiveAthleteData(data)))
       .catch(console.error);
   }
@@ -99,12 +105,15 @@ export const fetchLinkedProviders = (): ThunkAction<
 > => (dispatch, getState) => {
   const uid = selectUserId(getState());
   if (uid) {
-    firebase
-      .firestore()
-      .collection('users')
-      .doc(uid)
-      .collection('linkedProviders')
-      .get()
+    import('firebase/firestore')
+      .then(() =>
+        firebase
+          .firestore()
+          .collection('users')
+          .doc(uid)
+          .collection('linkedProviders')
+          .get()
+      )
       .then(result => result.docs.map(doc => doc.id))
       .then(linkedProviders =>
         dispatch(receiveLinkedProviders(linkedProviders))
@@ -118,13 +127,16 @@ export const disconnectLinkedProvider = (
 ): ThunkAction<void, State, null, Action> => (dispatch, getState) => {
   const uid = selectUserId(getState());
   if (uid) {
-    firebase
-      .firestore()
-      .collection('users')
-      .doc(uid)
-      .collection('linkedProviders')
-      .doc(name)
-      .delete()
+    import('firebase/firestore')
+      .then(() =>
+        firebase
+          .firestore()
+          .collection('users')
+          .doc(uid)
+          .collection('linkedProviders')
+          .doc(name)
+          .delete()
+      )
       .then(() => dispatch(fetchLinkedProviders()))
       .catch(console.error);
   }
