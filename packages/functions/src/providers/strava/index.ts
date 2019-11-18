@@ -22,10 +22,8 @@ const callStravaTokenAPI = (params: StravaTokenAPIParams) =>
 const getProviderDocRef = (uid: string) =>
   admin
     .firestore()
-    .collection('users')
-    .doc(uid)
-    .collection('linkedProviders')
-    .doc('strava');
+    .collection('stravaTokens')
+    .doc(uid);
 
 passport.use(
   new Strategy((token, callback) => {
@@ -73,12 +71,24 @@ router.post(
       });
       const { access_token, expires_at, refresh_token } = stravaResponse.data;
 
-      await getProviderDocRef(uid).set({
-        access_token,
-        expires_at,
-        refresh_token,
-        scope,
-      });
+      await admin
+        .firestore()
+        .batch()
+        .set(getProviderDocRef(uid), {
+          access_token,
+          expires_at,
+          refresh_token,
+          scope,
+        })
+        .set(
+          admin
+            .firestore()
+            .collection('users')
+            .doc(uid),
+          { linkedProviders: admin.firestore.FieldValue.arrayUnion('strava') },
+          { merge: true }
+        )
+        .commit();
 
       res.json({ access_token, expires_at });
     } catch (error) {

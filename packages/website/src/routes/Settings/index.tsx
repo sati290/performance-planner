@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   makeStyles,
@@ -14,12 +14,8 @@ import {
 } from '@material-ui/core';
 import * as qs from 'querystring';
 import stravaConnectImage from './strava-connect-button.svg';
-import { State } from '../../store/types';
-import {
-  fetchAthleteData,
-  fetchLinkedProviders,
-  disconnectLinkedProvider,
-} from '../../store/actions';
+import { AppState } from '../../store/reducers';
+import { disconnectLinkedProvider } from '../../store/actions';
 import Loading from '../../components/Loading';
 import AthleteDataForm from './AthleteDataForm';
 
@@ -54,15 +50,9 @@ const Settings: React.FC = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const { linkedProvidersState, athleteData } = useSelector((state: State) => ({
-    linkedProvidersState: state.linkedProviders,
-    athleteData: state.athleteData.loaded ? state.athleteData.data : null,
-  }));
-
-  useEffect(() => {
-    dispatch(fetchAthleteData());
-    dispatch(fetchLinkedProviders());
-  }, [dispatch]);
+  const providers = useSelector((state: AppState) =>
+    state.userData.loaded ? state.userData.data.linkedProviders : null
+  );
 
   return (
     <Container maxWidth="md">
@@ -73,22 +63,18 @@ const Settings: React.FC = () => {
         Athlete data
       </Typography>
       <Paper className={classes.paper}>
-        {athleteData ? (
-          <AthleteDataForm athleteData={athleteData} />
-        ) : (
-          <Loading />
-        )}
+        <AthleteDataForm />
       </Paper>
       <Typography variant="h6" className={classes.sectionTitle}>
         Linked providers
       </Typography>
       <Paper className={classes.paper}>
-        {linkedProvidersState.loaded ? (
+        {providers ? (
           <List>
             <ListItem>
               <ListItemText>Strava</ListItemText>
               <ListItemSecondaryAction>
-                {linkedProvidersState.data.some(p => p === 'strava') ? (
+                {providers.some(p => p === 'strava') ? (
                   <Button
                     onClick={() => dispatch(disconnectLinkedProvider('strava'))}
                   >

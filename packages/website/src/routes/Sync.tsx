@@ -4,11 +4,11 @@ import { useDispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { Button } from '@material-ui/core';
 import axios from 'axios';
-import { State } from '../store/types';
+import { AppState } from '../store/reducers';
 import { getStravaAPIToken } from '../store/actions';
 
 const Sync: React.FC = () => {
-  const dispatch = useDispatch<ThunkDispatch<State, null, Action>>();
+  const dispatch = useDispatch<ThunkDispatch<AppState, null, Action>>();
 
   const fetchActivityPage = (page: number) =>
     dispatch(getStravaAPIToken()).then(token =>

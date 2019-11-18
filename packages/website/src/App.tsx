@@ -4,8 +4,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { CssBaseline } from '@material-ui/core';
 import * as firebase from 'firebase/app';
 import './FirebaseInit';
-import { State } from './store/types';
-import { updateUser } from './store/actions';
+import { AppState } from './store/reducers';
+import { updateAuth, fetchUserData } from './store/actions';
 import TopBar from './components/TopBar';
 import Loading from './components/Loading';
 import Routes from './routes';
@@ -14,12 +14,13 @@ firebase.analytics();
 firebase.performance();
 
 const App: React.FC = () => {
-  const userPending = useSelector((state: State) => state.user.pending);
+  const authPending = useSelector((state: AppState) => state.auth.pending);
   const dispatch = useDispatch();
 
   useEffect(() => {
     const unsubscribe = firebase.auth().onAuthStateChanged(user => {
-      dispatch(updateUser(user));
+      dispatch(updateAuth(user));
+      dispatch(fetchUserData());
     });
 
     return unsubscribe;
@@ -30,7 +31,7 @@ const App: React.FC = () => {
       <CssBaseline />
       <Router>
         <TopBar />
-        {userPending ? <Loading /> : <Routes />}
+        {authPending ? <Loading /> : <Routes />}
       </Router>
     </>
   );

@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import {
-  Typography,
   Button,
   Table,
   TableBody,
@@ -12,17 +11,11 @@ import {
   TableHead,
 } from '@material-ui/core';
 import axios from 'axios';
-import { State } from '../store/types';
+import { AppState } from '../store/reducers';
 import { getStravaAPIToken } from '../store/actions';
 
 const Home: React.FC = () => {
-  const email = useSelector(
-    (state: State) =>
-      (!state.user.pending && state.user.loggedIn && state.user.data.email) ||
-      ''
-  );
-
-  const dispatch = useDispatch<ThunkDispatch<State, null, Action>>();
+  const dispatch = useDispatch<ThunkDispatch<AppState, null, Action>>();
   const [activities, setActivities] = useState<Array<any>>([]);
   const fetchActivities = () => {
     dispatch(getStravaAPIToken())
@@ -36,7 +29,6 @@ const Home: React.FC = () => {
 
   return (
     <>
-      <Typography>Hello {email}!</Typography>
       <Button onClick={fetchActivities}>Fetch activities</Button>
       <Table>
         <TableHead>

@@ -1,62 +1,66 @@
-import { Reducer } from 'redux';
+import { Reducer, combineReducers, AnyAction } from 'redux';
 import {
-  State,
   RESET_STORE,
-  UPDATE_USER,
-  RECEIVE_ATHLETE_DATA,
-  RECEIVE_LINKED_PROVIDERS,
-  RECEIVE_STRAVA_API_TOKEN,
-  ActionTypes,
+  AuthState,
+  AuthActionTypes,
+  AuthActions,
+  UserDataState,
+  UserDataActionTypes,
+  UserDataActions,
+  StravaActions,
+  StravaActionTypes,
+  StravaState,
 } from './types';
 
-const initialState: State = {
-  user: { pending: true },
-  athleteData: { loaded: false },
-  linkedProviders: { loaded: false },
-  stravaAPIToken: { accessToken: '', expiresAt: 0 },
-};
-
-const appReducer: Reducer<State, ActionTypes> = (
-  state = initialState,
+const authReducer: Reducer<AuthState, AuthActions> = (
+  state = { pending: true },
   action
-): State => {
+) => {
   switch (action.type) {
-    case UPDATE_USER: {
-      return {
-        ...state,
-        user: action.user
-          ? {
-              pending: false,
-              loggedIn: true,
-              data: { uid: action.user.uid, email: action.user.email || '' },
-            }
-          : { pending: false, loggedIn: false },
-      };
-    }
-    case RECEIVE_ATHLETE_DATA: {
-      return {
-        ...state,
-        athleteData: { loaded: true, data: action.data },
-      };
-    }
-    case RECEIVE_LINKED_PROVIDERS: {
-      return {
-        ...state,
-        linkedProviders: { loaded: true, data: action.data },
-      };
-    }
-    case RECEIVE_STRAVA_API_TOKEN: {
-      return {
-        ...state,
-        stravaAPIToken: action.data,
-      };
+    case AuthActionTypes.UPDATE_AUTH: {
+      const { user } = action;
+      return user
+        ? { pending: false, uid: user.uid, email: user.email || '' }
+        : { pending: false, uid: null };
     }
     default:
       return state;
   }
 };
 
-const rootReducer: Reducer<State, ActionTypes> = (state, action) => {
+const userDataReducer: Reducer<UserDataState, UserDataActions> = (
+  state = { loaded: false },
+  action
+) => {
+  switch (action.type) {
+    case UserDataActionTypes.RECEIVE:
+      return { loaded: true, data: action.data };
+    default:
+      return state;
+  }
+};
+
+const stravaReducer: Reducer<StravaState, StravaActions> = (
+  state = { accessToken: '', expiresAt: 0 },
+  action
+) => {
+  switch (action.type) {
+    case StravaActionTypes.RECEIVE_API_TOKEN:
+      return { ...state, ...action.data };
+    default:
+      return state;
+  }
+};
+
+const appReducer = combineReducers({
+  auth: authReducer,
+  userData: userDataReducer,
+  strava: stravaReducer,
+});
+
+export type AppState = ReturnType<typeof appReducer>;
+
+const rootReducer: Reducer<AppState, AnyAction> = (state, action) => {
   if (action.type === RESET_STORE) {
     return appReducer(undefined, action);
   } else {

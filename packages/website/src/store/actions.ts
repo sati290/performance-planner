@@ -3,46 +3,44 @@ import { ThunkAction } from 'redux-thunk';
 import * as firebase from 'firebase/app';
 import axios from 'axios';
 import {
-  AthleteData,
-  LinkedProviderData,
-  StravaAPIToken,
-  State,
   RESET_STORE,
-  UPDATE_USER,
-  RECEIVE_ATHLETE_DATA,
-  RECEIVE_LINKED_PROVIDERS,
-  RECEIVE_STRAVA_API_TOKEN,
+  AuthActionTypes,
+  UserData,
+  UserDataActionTypes,
+  StravaAPIToken,
+  StravaActionTypes,
 } from './types';
+import { AppState } from './reducers';
 
 export const resetStore = () => ({ type: RESET_STORE });
 
-export const updateUser = (
+export const updateAuth = (
   user: firebase.User | null
-): ThunkAction<void, State, null, Action> => (dispatch, getState) => {
+): ThunkAction<void, AppState, null, Action> => (dispatch, getState) => {
   const state = getState();
-  const currentUid =
-    !state.user.pending && state.user.loggedIn && state.user.data.uid;
+  const uid = state.auth.pending ? null : state.auth.uid;
   const newUid = user && user.uid;
-  if (currentUid !== newUid) {
+  if (uid && uid !== newUid) {
     dispatch(resetStore());
   }
 
   dispatch({
-    type: UPDATE_USER,
+    type: AuthActionTypes.UPDATE_AUTH,
     user,
   });
 };
 
-export const selectUserId = (state: State) => {
-  const { user } = state;
-  return (!user.pending && user.loggedIn && user.data.uid) || null;
-};
+export const selectUserId = (state: AppState) =>
+  state.auth.pending ? null : state.auth.uid;
 
-export const receiveAthleteData = (data: AthleteData) => {
-  return { type: RECEIVE_ATHLETE_DATA, data };
-};
+export const receiveUserData = (data: UserData) => ({
+  type: UserDataActionTypes.RECEIVE,
+  data,
+});
 
-export const fetchAthleteData = (): ThunkAction<void, State, null, Action> => (
+export const resetUserData = () => ({ type: UserDataActionTypes.RESET });
+
+export const fetchUserData = (): ThunkAction<void, AppState, null, Action> => (
   dispatch,
   getState
 ) => {
@@ -52,21 +50,21 @@ export const fetchAthleteData = (): ThunkAction<void, State, null, Action> => (
       .then(() =>
         firebase
           .firestore()
-          .collection('athleteData')
+          .collection('users')
           .doc(uid)
           .get()
       )
       .then(doc => {
-        if (doc.exists) {
-          const { gender, restingHR, maxHR, lthr } = doc.data()!;
-          dispatch(receiveAthleteData({ gender, restingHR, maxHR, lthr }));
+        const data = doc.data();
+        if (data) {
+          const { gender, restingHR, maxHR, lthr, linkedProviders } = data;
+          dispatch(
+            receiveUserData({ gender, restingHR, maxHR, lthr, linkedProviders })
+          );
         } else {
           dispatch(
-            updateAthleteData({
-              gender: '',
-              restingHR: 60,
-              maxHR: 190,
-              lthr: 170,
+            receiveUserData({
+              linkedProviders: [],
             })
           );
         }
@@ -75,34 +73,9 @@ export const fetchAthleteData = (): ThunkAction<void, State, null, Action> => (
   }
 };
 
-export const updateAthleteData = (
-  data: AthleteData
-): ThunkAction<void, State, null, Action> => (dispatch, getState) => {
-  const uid = selectUserId(getState());
-  if (uid) {
-    import('firebase/firestore')
-      .then(() =>
-        firebase
-          .firestore()
-          .collection('athleteData')
-          .doc(uid)
-          .set(data)
-      )
-      .then(() => dispatch(receiveAthleteData(data)))
-      .catch(console.error);
-  }
-};
-
-export const receiveLinkedProviders = (data: LinkedProviderData) => {
-  return { type: RECEIVE_LINKED_PROVIDERS, data };
-};
-
-export const fetchLinkedProviders = (): ThunkAction<
-  void,
-  State,
-  null,
-  Action
-> => (dispatch, getState) => {
+export const updateUserData = (
+  data: Partial<UserData>
+): ThunkAction<void, AppState, null, Action> => (dispatch, getState) => {
   const uid = selectUserId(getState());
   if (uid) {
     import('firebase/firestore')
@@ -111,20 +84,16 @@ export const fetchLinkedProviders = (): ThunkAction<
           .firestore()
           .collection('users')
           .doc(uid)
-          .collection('linkedProviders')
-          .get()
+          .set(data, { merge: true })
       )
-      .then(result => result.docs.map(doc => doc.id))
-      .then(linkedProviders =>
-        dispatch(receiveLinkedProviders(linkedProviders))
-      )
+      .then(() => dispatch(fetchUserData()))
       .catch(console.error);
   }
 };
 
 export const disconnectLinkedProvider = (
   name: string
-): ThunkAction<void, State, null, Action> => (dispatch, getState) => {
+): ThunkAction<void, AppState, null, Action> => (dispatch, getState) => {
   const uid = selectUserId(getState());
   if (uid) {
     import('firebase/firestore')
@@ -133,22 +102,22 @@ export const disconnectLinkedProvider = (
           .firestore()
           .collection('users')
           .doc(uid)
-          .collection('linkedProviders')
-          .doc(name)
-          .delete()
+          .update({
+            linkedProviders: firebase.firestore.FieldValue.arrayRemove(name),
+          })
       )
-      .then(() => dispatch(fetchLinkedProviders()))
+      .then(() => dispatch(fetchUserData()))
       .catch(console.error);
   }
 };
 
 export const receiveStravaAPIToken = (data: StravaAPIToken) => {
-  return { type: RECEIVE_STRAVA_API_TOKEN, data };
+  return { type: StravaActionTypes.RECEIVE_API_TOKEN, data };
 };
 
 export const fetchStravaAPIToken = (): ThunkAction<
   Promise<void>,
-  State,
+  AppState,
   null,
   Action
 > => async dispatch => {
@@ -168,17 +137,17 @@ export const fetchStravaAPIToken = (): ThunkAction<
 
 export const getStravaAPIToken = (): ThunkAction<
   Promise<string>,
-  State,
+  AppState,
   null,
   Action
 > => async (dispatch, getState) => {
   const refreshThreshold = Date.now() / 1000 + 600;
   const {
-    stravaAPIToken: { accessToken, expiresAt },
+    strava: { accessToken, expiresAt },
   } = getState();
   if (!accessToken || expiresAt < refreshThreshold) {
     await dispatch(fetchStravaAPIToken());
   }
 
-  return getState().stravaAPIToken.accessToken;
+  return getState().strava.accessToken;
 };

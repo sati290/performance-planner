@@ -7,8 +7,8 @@ import {
   Button,
   makeStyles,
 } from '@material-ui/core';
-import { State } from '../store/types';
 import * as firebase from 'firebase/app';
+import { AppState } from '../store/reducers';
 import RouterButton from '../components/RouterButton';
 import RouterLink from '../components/RouterLink';
 
@@ -20,8 +20,10 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const TopBar: React.FC = () => {
-  const user = useSelector((state: State) =>
-    !state.user.pending && state.user.loggedIn ? state.user.data : null
+  const { userLoggedIn, email } = useSelector((state: AppState) =>
+    !state.auth.pending && state.auth.uid
+      ? { userLoggedIn: true, email: state.auth.email }
+      : { userLoggedIn: false, email: '' }
   );
   const classes = useStyles();
 
@@ -37,9 +39,9 @@ const TopBar: React.FC = () => {
             Performance Planner
           </RouterLink>
         </Typography>
-        {user && (
+        {userLoggedIn && (
           <>
-            <Typography>{user.email}</Typography>
+            <Typography>{email}</Typography>
             <RouterButton color="inherit" to="/sync">
               Sync
             </RouterButton>

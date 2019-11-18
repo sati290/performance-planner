@@ -1,24 +1,32 @@
 import React, { useState, useMemo, ChangeEvent, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Grid, TextField, MenuItem, Button } from '@material-ui/core';
-import { AthleteData } from '../../store/types';
-import { updateAthleteData } from '../../store/actions';
+import { AppState } from '../../store/reducers';
+import { updateUserData } from '../../store/actions';
+import Loading from '../../components/Loading';
 
-interface AthleteDataFormProps {
-  athleteData: AthleteData;
+interface SelectedUserData {
+  gender?: 'male' | 'female';
+  restingHR?: number;
+  maxHR?: number;
+  lthr?: number;
 }
 
-const AthleteDataForm: React.FC<AthleteDataFormProps> = ({ athleteData }) => {
+interface AthleteDataFormProps {
+  userData: SelectedUserData;
+}
+
+const AthleteDataForm: React.FC<AthleteDataFormProps> = ({ userData }) => {
   const dispatch = useDispatch();
-  const [state, setState] = useState(athleteData);
+  const [state, setState] = useState(userData);
 
   useEffect(() => {
-    setState(athleteData);
-  }, [athleteData]);
+    setState(userData);
+  }, [userData]);
 
   const dataChanged = useMemo(
-    () => JSON.stringify(athleteData) === JSON.stringify(state),
-    [state, athleteData]
+    () => JSON.stringify(userData) === JSON.stringify(state),
+    [state, userData]
   );
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -35,7 +43,7 @@ const AthleteDataForm: React.FC<AthleteDataFormProps> = ({ athleteData }) => {
         <TextField
           select
           name="gender"
-          value={state.gender}
+          value={state.gender || ''}
           onChange={handleChange}
           label="Gender"
           fullWidth
@@ -48,7 +56,7 @@ const AthleteDataForm: React.FC<AthleteDataFormProps> = ({ athleteData }) => {
         <TextField
           type="number"
           name="restingHR"
-          value={state.restingHR}
+          value={state.restingHR || ''}
           onChange={handleChange}
           label="Resting HR"
           fullWidth
@@ -58,7 +66,7 @@ const AthleteDataForm: React.FC<AthleteDataFormProps> = ({ athleteData }) => {
         <TextField
           type="number"
           name="maxHR"
-          value={state.maxHR}
+          value={state.maxHR || ''}
           onChange={handleChange}
           label="Max HR"
           fullWidth
@@ -68,7 +76,7 @@ const AthleteDataForm: React.FC<AthleteDataFormProps> = ({ athleteData }) => {
         <TextField
           type="number"
           name="lthr"
-          value={state.lthr}
+          value={state.lthr || ''}
           onChange={handleChange}
           label="LTHR"
           fullWidth
@@ -79,7 +87,7 @@ const AthleteDataForm: React.FC<AthleteDataFormProps> = ({ athleteData }) => {
           <Grid item>
             <Button
               disabled={dataChanged}
-              onClick={() => dispatch(updateAthleteData(state))}
+              onClick={() => dispatch(updateUserData(state))}
               variant="contained"
               color="primary"
             >
@@ -92,4 +100,17 @@ const AthleteDataForm: React.FC<AthleteDataFormProps> = ({ athleteData }) => {
   );
 };
 
-export default AthleteDataForm;
+const AthleteDataFormOrLoading: React.FC = () => {
+  const userData = useSelector<AppState, SelectedUserData | null>(state => {
+    if (state.userData.loaded) {
+      const { gender, restingHR, maxHR, lthr } = state.userData.data;
+      return { gender, restingHR, maxHR, lthr };
+    } else {
+      return null;
+    }
+  });
+
+  return userData ? <AthleteDataForm userData={userData} /> : <Loading />;
+};
+
+export default AthleteDataFormOrLoading;

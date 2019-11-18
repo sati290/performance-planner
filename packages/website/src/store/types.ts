@@ -1,76 +1,62 @@
-interface UserData {
-  uid: string;
-  email: string;
-}
-type UserState =
+export const RESET_STORE = 'RESET_STORE';
+
+export type AuthState =
   | { pending: true }
-  | { pending: false; loggedIn: false }
-  | { pending: false; loggedIn: true; data: UserData };
+  | { pending: false; uid: null }
+  | { pending: false; uid: string; email: string };
 
-export interface AthleteData {
-  gender: '' | 'male' | 'female';
-  restingHR: number;
-  maxHR: number;
-  lthr: number;
+export enum AuthActionTypes {
+  UPDATE_AUTH = 'UPDATE_AUTH',
 }
 
-type AthleteDataState = { loaded: false } | { loaded: true; data: AthleteData };
+export interface UpdateAuthAction {
+  type: AuthActionTypes.UPDATE_AUTH;
+  user: firebase.User | null;
+}
 
-export type LinkedProviderData = Array<string>;
-type LinkedProvidersState =
+export type AuthActions = UpdateAuthAction;
+
+export interface UserData {
+  gender?: 'male' | 'female';
+  restingHR?: number;
+  maxHR?: number;
+  lthr?: number;
+  linkedProviders: string[];
+}
+
+export type UserDataState =
   | { loaded: false }
-  | { loaded: true; data: LinkedProviderData };
+  | { loaded: true; data: UserData };
+
+export enum UserDataActionTypes {
+  RECEIVE = 'RECEIVE_USER_DATA',
+  RESET = 'RESET_USER_DATA',
+}
+
+export interface ReceiveUserDataAction {
+  type: UserDataActionTypes.RECEIVE;
+  data: UserData;
+}
+
+export interface ResetUserDataAction {
+  type: UserDataActionTypes.RESET;
+}
+
+export type UserDataActions = ReceiveUserDataAction | ResetUserDataAction;
 
 export interface StravaAPIToken {
   accessToken: string;
   expiresAt: number;
 }
-type StravaAPITokenState = StravaAPIToken;
+export type StravaState = StravaAPIToken;
 
-export interface State {
-  user: UserState;
-  athleteData: AthleteDataState;
-  linkedProviders: LinkedProvidersState;
-  stravaAPIToken: StravaAPITokenState;
+export enum StravaActionTypes {
+  RECEIVE_API_TOKEN = 'RECEIVE_STRAVA_API_TOKEN',
 }
 
-export const RESET_STORE = 'RESET_STORE';
-
-interface ResetStoreAction {
-  type: typeof RESET_STORE;
-}
-
-export const UPDATE_USER = 'UPDATE_USER';
-
-interface UpdateUserAction {
-  type: typeof UPDATE_USER;
-  user: firebase.User | null;
-}
-
-export const RECEIVE_ATHLETE_DATA = 'RECEIVE_ATHLETE_DATA';
-
-interface ReceiveAthleteDataAction {
-  type: typeof RECEIVE_ATHLETE_DATA;
-  data: AthleteData;
-}
-
-export const RECEIVE_LINKED_PROVIDERS = 'RECEIVE_LINKED_PROVIDERS';
-
-interface ReceiveLinkedProvidersAction {
-  type: typeof RECEIVE_LINKED_PROVIDERS;
-  data: LinkedProviderData;
-}
-
-export const RECEIVE_STRAVA_API_TOKEN = 'RECEIVE_STRAVA_API_TOKEN';
-
-interface ReceiveStravaAPITokenAction {
-  type: typeof RECEIVE_STRAVA_API_TOKEN;
+export interface ReceiveStravaAPITokenAction {
+  type: typeof StravaActionTypes.RECEIVE_API_TOKEN;
   data: StravaAPIToken;
 }
 
-export type ActionTypes =
-  | ResetStoreAction
-  | UpdateUserAction
-  | ReceiveAthleteDataAction
-  | ReceiveLinkedProvidersAction
-  | ReceiveStravaAPITokenAction;
+export type StravaActions = ReceiveStravaAPITokenAction;

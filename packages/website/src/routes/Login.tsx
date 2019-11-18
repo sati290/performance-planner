@@ -10,7 +10,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import * as firebase from 'firebase/app';
-import { State } from '../store/types';
+import { AppState } from '../store/reducers';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
 
 const Login: React.FC = () => {
   const userLoggedIn = useSelector(
-    (state: State) => !state.user.pending && state.user.loggedIn
+    (state: AppState) => !state.auth.pending && !!state.auth.uid
   );
   const classes = useStyles();
 
