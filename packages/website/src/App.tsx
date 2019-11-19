@@ -5,7 +5,7 @@ import { CssBaseline } from '@material-ui/core';
 import * as firebase from 'firebase/app';
 import './FirebaseInit';
 import { AppState } from './store/reducers';
-import { updateAuth, fetchUserData } from './store/actions';
+import { updateAuth, fetchUserData } from './store/thunks';
 import TopBar from './components/TopBar';
 import Loading from './components/Loading';
 import Routes from './routes';

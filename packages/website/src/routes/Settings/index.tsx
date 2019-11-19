@@ -15,7 +15,7 @@ import {
 import * as qs from 'querystring';
 import stravaConnectImage from './strava-connect-button.svg';
 import { AppState } from '../../store/reducers';
-import { disconnectLinkedProvider } from '../../store/actions';
+import { disconnectLinkedProvider } from '../../store/thunks';
 import Loading from '../../components/Loading';
 import AthleteDataForm from './AthleteDataForm';
 

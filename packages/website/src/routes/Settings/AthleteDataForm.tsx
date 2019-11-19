@@ -2,7 +2,7 @@ import React, { useState, useMemo, ChangeEvent, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Grid, TextField, MenuItem, Button } from '@material-ui/core';
 import { AppState } from '../../store/reducers';
-import { updateUserData } from '../../store/actions';
+import { updateUserData } from '../../store/thunks';
 import Loading from '../../components/Loading';
 
 interface SelectedUserData {

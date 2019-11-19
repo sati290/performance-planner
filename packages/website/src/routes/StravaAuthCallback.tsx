@@ -4,7 +4,8 @@ import { useDispatch } from 'react-redux';
 import * as firebase from 'firebase/app';
 import * as qs from 'querystring';
 import axios from 'axios';
-import { receiveStravaAPIToken, fetchUserData } from '../store/actions';
+import { receiveStravaAPIToken } from '../store/actions';
+import { fetchUserData } from '../store/thunks';
 import Loading from '../components/Loading';
 
 const AuthCallback: React.FC = () => {
