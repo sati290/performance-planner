@@ -7,10 +7,8 @@ import {
   UserDataState,
   UserDataActionTypes,
   UserDataActions,
-  StravaActions,
-  StravaActionTypes,
-  StravaState,
 } from './types';
+import stravaReducer from './strava/reducer';
 
 const authReducer: Reducer<AuthState, AuthActions> = (
   state = { pending: true },
@@ -35,18 +33,6 @@ const userDataReducer: Reducer<UserDataState, UserDataActions> = (
   switch (action.type) {
     case UserDataActionTypes.RECEIVE:
       return { loaded: true, data: action.data };
-    default:
-      return state;
-  }
-};
-
-const stravaReducer: Reducer<StravaState, StravaActions> = (
-  state = { accessToken: '', expiresAt: 0 },
-  action
-) => {
-  switch (action.type) {
-    case StravaActionTypes.RECEIVE_API_TOKEN:
-      return { ...state, ...action.data };
     default:
       return state;
   }

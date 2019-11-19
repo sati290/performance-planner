@@ -1,10 +1,9 @@
 import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import * as firebase from 'firebase/app';
-import axios from 'axios';
 import { AuthActionTypes, UserData } from './types';
 import { AppState } from './reducers';
-import { resetStore, receiveUserData, receiveStravaAPIToken } from './actions';
+import { resetStore, receiveUserData } from './actions';
 
 export const updateAuth = (
   user: firebase.User | null
@@ -94,41 +93,4 @@ export const disconnectLinkedProvider = (
       .then(() => dispatch(fetchUserData()))
       .catch(console.error);
   }
-};
-
-export const fetchStravaAPIToken = (): ThunkAction<
-  Promise<void>,
-  AppState,
-  null,
-  Action
-> => async dispatch => {
-  const firebaseToken = await firebase.auth().currentUser!.getIdToken(true);
-  const response = await axios.get(
-    (process.env.REACT_APP_API_ORIGIN || '') + '/api/providers/strava/token',
-    { headers: { Authorization: 'Bearer ' + firebaseToken } }
-  );
-
-  dispatch(
-    receiveStravaAPIToken({
-      accessToken: response.data.access_token,
-      expiresAt: response.data.expires_at,
-    })
-  );
-};
-
-export const getStravaAPIToken = (): ThunkAction<
-  Promise<string>,
-  AppState,
-  null,
-  Action
-> => async (dispatch, getState) => {
-  const refreshThreshold = Date.now() / 1000 + 600;
-  const {
-    strava: { accessToken, expiresAt },
-  } = getState();
-  if (!accessToken || expiresAt < refreshThreshold) {
-    await dispatch(fetchStravaAPIToken());
-  }
-
-  return getState().strava.accessToken;
 };

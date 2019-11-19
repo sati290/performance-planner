@@ -5,7 +5,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { Button } from '@material-ui/core';
 import axios from 'axios';
 import { AppState } from '../store/reducers';
-import { getStravaAPIToken } from '../store/thunks';
+import { getStravaAPIToken } from '../store/strava/thunks';
 
 const Sync: React.FC = () => {
   const dispatch = useDispatch<ThunkDispatch<AppState, null, Action>>();

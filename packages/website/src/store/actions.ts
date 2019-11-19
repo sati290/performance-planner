@@ -1,10 +1,4 @@
-import {
-  RESET_STORE,
-  UserData,
-  UserDataActionTypes,
-  StravaAPIToken,
-  StravaActionTypes,
-} from './types';
+import { RESET_STORE, UserData, UserDataActionTypes } from './types';
 
 export const resetStore = () => ({ type: RESET_STORE });
 
@@ -14,7 +8,3 @@ export const receiveUserData = (data: UserData) => ({
 });
 
 export const resetUserData = () => ({ type: UserDataActionTypes.RESET });
-
-export const receiveStravaAPIToken = (data: StravaAPIToken) => {
-  return { type: StravaActionTypes.RECEIVE_API_TOKEN, data };
-};
