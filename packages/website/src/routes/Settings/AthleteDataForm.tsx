@@ -1,9 +1,11 @@
-import React, { useState, useMemo, ChangeEvent, useEffect } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Grid, TextField, MenuItem, Button } from '@material-ui/core';
+import { Formik, Form } from 'formik';
+import { Grid, MenuItem, Button } from '@material-ui/core';
 import { AppState } from '../../store/reducers';
 import { updateUserData } from '../../store/thunks';
 import Loading from '../../components/Loading';
+import FormikTextField from '../../components/FormikTextField';
 
 interface SelectedUserData {
   gender?: 'male' | 'female';
@@ -18,85 +20,56 @@ interface AthleteDataFormProps {
 
 const AthleteDataForm: React.FC<AthleteDataFormProps> = ({ userData }) => {
   const dispatch = useDispatch();
-  const [state, setState] = useState(userData);
-
-  useEffect(() => {
-    setState(userData);
-  }, [userData]);
-
-  const dataChanged = useMemo(
-    () => JSON.stringify(userData) === JSON.stringify(state),
-    [state, userData]
-  );
-
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type } = event.target;
-    setState(prevState => ({
-      ...prevState,
-      [name]: type === 'number' ? Number(value) : value,
-    }));
-  };
 
   return (
-    <Grid container direction="column" spacing={2}>
-      <Grid item>
-        <TextField
-          select
-          name="gender"
-          value={state.gender || ''}
-          onChange={handleChange}
-          label="Gender"
-          fullWidth
-        >
-          <MenuItem value="male">Male</MenuItem>
-          <MenuItem value="female">Female</MenuItem>
-        </TextField>
-      </Grid>
-      <Grid item xs>
-        <TextField
-          type="number"
-          name="restingHR"
-          value={state.restingHR || ''}
-          onChange={handleChange}
-          label="Resting HR"
-          fullWidth
-        />
-      </Grid>
-      <Grid item xs>
-        <TextField
-          type="number"
-          name="maxHR"
-          value={state.maxHR || ''}
-          onChange={handleChange}
-          label="Max HR"
-          fullWidth
-        />
-      </Grid>
-      <Grid item xs>
-        <TextField
-          type="number"
-          name="lthr"
-          value={state.lthr || ''}
-          onChange={handleChange}
-          label="LTHR"
-          fullWidth
-        />
-      </Grid>
-      <Grid item xs>
-        <Grid container justify="flex-end">
+    <Formik
+      initialValues={userData}
+      onSubmit={values => dispatch(updateUserData(values))}
+    >
+      <Form>
+        <Grid container direction="column" spacing={2}>
           <Grid item>
-            <Button
-              disabled={dataChanged}
-              onClick={() => dispatch(updateUserData(state))}
-              variant="contained"
-              color="primary"
-            >
-              Save
-            </Button>
+            <FormikTextField select name="gender" label="Gender" fullWidth>
+              <MenuItem value="male">Male</MenuItem>
+              <MenuItem value="female">Female</MenuItem>
+            </FormikTextField>
+          </Grid>
+          <Grid item xs>
+            <FormikTextField
+              type="number"
+              name="restingHR"
+              label="Resting HR"
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs>
+            <FormikTextField
+              type="number"
+              name="maxHR"
+              label="Max HR"
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs>
+            <FormikTextField type="number" name="lthr" label="LTHR" fullWidth />
+          </Grid>
+          <Grid item xs>
+            <Grid container justify="flex-end">
+              <Grid item>
+                <Button
+                  // disabled={dataChanged}
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                >
+                  Save
+                </Button>
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
-      </Grid>
-    </Grid>
+      </Form>
+    </Formik>
   );
 };
 
