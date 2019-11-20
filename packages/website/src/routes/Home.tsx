@@ -1,7 +1,5 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { Action } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Button,
   Table,
@@ -10,26 +8,22 @@ import {
   TableCell,
   TableHead,
 } from '@material-ui/core';
-import axios from 'axios';
 import { AppState } from '../store/reducers';
-import { getStravaAPIToken } from '../store/strava/thunks';
+import { fetchStravaActivities } from '../store/strava/thunks';
 
 const Home: React.FC = () => {
-  const dispatch = useDispatch<ThunkDispatch<AppState, null, Action>>();
-  const [activities, setActivities] = useState<Array<any>>([]);
-  const fetchActivities = () => {
-    dispatch(getStravaAPIToken())
-      .then(token =>
-        axios.get('https://www.strava.com/api/v3/athlete/activities', {
-          headers: { Authorization: 'Bearer ' + token },
-        })
-      )
-      .then(response => setActivities(response.data));
-  };
+  const dispatch = useDispatch();
+  const activities = useSelector((state: AppState) =>
+    state.strava.activities.status !== 'unloaded'
+      ? state.strava.activities.data
+      : []
+  );
 
   return (
     <>
-      <Button onClick={fetchActivities}>Fetch activities</Button>
+      <Button onClick={() => dispatch(fetchStravaActivities())}>
+        Fetch activities
+      </Button>
       <Table>
         <TableHead>
           <TableRow>
