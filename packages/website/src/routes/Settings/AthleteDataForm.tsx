@@ -9,23 +9,20 @@ import { updateUserData } from '../../store/thunks';
 import Loading from '../../components/Loading';
 import FormikTextField from '../../components/FormikTextField';
 
-interface SelectedUserData {
-  gender: 'male' | 'female' | '';
-  restingHR: number | '';
-  maxHR: number | '';
-  lthr: number | '';
-}
+type SelectedUserData = Required<
+  Pick<UserData, 'gender' | 'restingHR' | 'maxHR' | 'lthr'>
+>;
+type FormData = { [K in keyof SelectedUserData]: SelectedUserData[K] | '' };
 
 interface AthleteDataFormProps {
-  userData: SelectedUserData;
+  userData: FormData;
 }
 
 const AthleteDataForm: React.FC<AthleteDataFormProps> = ({ userData }) => {
   const dispatch = useDispatch();
-
-  const handleSubmit = (values: SelectedUserData) => {
+  const handleSubmit = (values: FormData) => {
     const data = _.pickBy(values);
-    dispatch(updateUserData(data as Partial<UserData>));
+    dispatch(updateUserData(data));
   };
 
   return (
@@ -89,7 +86,7 @@ const AthleteDataForm: React.FC<AthleteDataFormProps> = ({ userData }) => {
 };
 
 const AthleteDataFormOrLoading: React.FC = () => {
-  const userData = useSelector<AppState, SelectedUserData | null>(state => {
+  const userData = useSelector<AppState, FormData | null>(state => {
     if (state.userData.loaded) {
       const {
         gender = '',
