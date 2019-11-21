@@ -16,7 +16,12 @@ const Sync: React.FC = () => {
           Progress {syncState.activitiesProcessed}/{syncState.activitiesTotal}
         </Typography>
       )}
-      <Button onClick={() => dispatch(syncStravaActivities())}>
+      <Button
+        disabled={
+          syncState.status !== 'ready' && syncState.status !== 'finished'
+        }
+        onClick={() => dispatch(syncStravaActivities())}
+      >
         Start Sync
       </Button>
     </Container>
