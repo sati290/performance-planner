@@ -185,7 +185,7 @@ export const syncStravaActivities = (): ThunkAction<
           const hrss = calculateHRSS(response.data, userData.data as any);
 
           console.log(
-            `activity ${activity.id} at ${activity.start_date} duration: ${activity.duration} hrss: ${hrss}`
+            `activity ${activity.id} at ${activity.start_date} moving time: ${activity.moving_time} hrss: ${hrss}`
           );
         } else {
           console.warn('missing streams for activity', activity.id);
