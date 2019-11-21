@@ -2,7 +2,12 @@ import { Reducer } from 'redux';
 import { StravaState, StravaActions, StravaActionTypes } from './types';
 
 const reducer: Reducer<StravaState, StravaActions> = (
-  state = { accessToken: '', expiresAt: 0, activities: { status: 'unloaded' } },
+  state = {
+    accessToken: '',
+    expiresAt: 0,
+    activities: { status: 'unloaded' },
+    sync: { status: 'ready' },
+  },
   action
 ) => {
   switch (action.type) {
@@ -31,6 +36,8 @@ const reducer: Reducer<StravaState, StravaActions> = (
       } else {
         return state;
       }
+    case StravaActionTypes.UPDATE_SYNC_STATUS:
+      return { ...state, sync: action.data };
     default:
       return state;
   }

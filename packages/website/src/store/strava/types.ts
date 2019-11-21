@@ -9,13 +9,25 @@ export type ActivitiesState =
   | { status: 'unloaded' }
   | { status: 'loading' | 'loaded'; data: Activities };
 
-export type StravaState = StravaAPIToken & { activities: ActivitiesState };
+export type SyncState =
+  | { status: 'ready' | 'fetching_activities' }
+  | {
+      status: 'syncing' | 'finished';
+      activitiesTotal: number;
+      activitiesProcessed: number;
+    };
+
+export type StravaState = StravaAPIToken & {
+  activities: ActivitiesState;
+  sync: SyncState;
+};
 
 export enum StravaActionTypes {
   RECEIVE_API_TOKEN = 'STRAVA/RECEIVE_API_TOKEN',
   START_LOADING_ACTIVITIES = 'STRAVA/START_LOADING_ACTIVITIES',
   RECEIVE_ACTIVITIES = 'STRAVA/RECEIVE_ACTIVITIES',
   FINISH_LOADING_ACTIVITIES = 'STRAVA/FINISH_LOADING_ACTIVITIES',
+  UPDATE_SYNC_STATUS = 'STRAVA/UPDATE_SYNC_STATUS',
 }
 
 export interface ReceiveStravaAPITokenAction {
@@ -36,8 +48,14 @@ export interface FinishLoadingStravaActivitiesAction {
   type: typeof StravaActionTypes.FINISH_LOADING_ACTIVITIES;
 }
 
+export interface UpdateStravaSyncStatusAction {
+  type: typeof StravaActionTypes.UPDATE_SYNC_STATUS;
+  data: SyncState;
+}
+
 export type StravaActions =
   | ReceiveStravaAPITokenAction
   | StartLoadingStravaActivitiesAction
   | ReceiveStravaActivitiesAction
-  | FinishLoadingStravaActivitiesAction;
+  | FinishLoadingStravaActivitiesAction
+  | UpdateStravaSyncStatusAction;

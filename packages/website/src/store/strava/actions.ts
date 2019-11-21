@@ -1,4 +1,9 @@
-import { StravaAPIToken, Activities, StravaActionTypes } from './types';
+import {
+  StravaAPIToken,
+  Activities,
+  SyncState,
+  StravaActionTypes,
+} from './types';
 
 export const receiveStravaAPIToken = (data: StravaAPIToken) => ({
   type: StravaActionTypes.RECEIVE_API_TOKEN,
@@ -16,4 +21,9 @@ export const receiveStravaActivities = (data: Activities) => ({
 
 export const finishLoadingStravaActivities = () => ({
   type: StravaActionTypes.FINISH_LOADING_ACTIVITIES,
+});
+
+export const updateStravaSyncStatus = (data: SyncState) => ({
+  type: StravaActionTypes.UPDATE_SYNC_STATUS,
+  data,
 });
