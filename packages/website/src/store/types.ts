@@ -6,15 +6,21 @@ export type AuthState =
   | { pending: false; uid: string; email: string };
 
 export enum AuthActionTypes {
-  UPDATE_AUTH = 'UPDATE_AUTH',
+  START_UPDATE = 'AUTH/START_UPDATE',
+  FINISH_UPDATE = 'AUTH/FINISH_UPDATE',
 }
 
-export interface UpdateAuthAction {
-  type: AuthActionTypes.UPDATE_AUTH;
-  user: firebase.User | null;
+export interface StartAuthUpdateAction {
+  type: AuthActionTypes.START_UPDATE;
+  payload: firebase.User | null;
 }
 
-export type AuthActions = UpdateAuthAction;
+export interface FinishAuthUpdateAction {
+  type: AuthActionTypes.FINISH_UPDATE;
+  payload: firebase.User | null;
+}
+
+export type AuthActions = StartAuthUpdateAction | FinishAuthUpdateAction;
 
 export interface UserData {
   gender?: 'male' | 'female';

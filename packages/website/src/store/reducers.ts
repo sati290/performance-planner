@@ -15,10 +15,12 @@ const authReducer: Reducer<AuthState, AuthActions> = (
   action
 ) => {
   switch (action.type) {
-    case AuthActionTypes.UPDATE_AUTH: {
-      const { user } = action;
-      return user
-        ? { pending: false, uid: user.uid, email: user.email || '' }
+    case AuthActionTypes.START_UPDATE:
+      return state;
+    case AuthActionTypes.FINISH_UPDATE: {
+      const { payload } = action;
+      return payload
+        ? { pending: false, uid: payload.uid, email: payload.email || '' }
         : { pending: false, uid: null };
     }
     default:

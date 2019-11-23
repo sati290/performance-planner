@@ -1,25 +1,9 @@
 import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import * as firebase from 'firebase/app';
-import { AuthActionTypes, UserData } from './types';
+import { UserData } from './types';
 import { AppState } from './reducers';
-import { resetStore, receiveUserData } from './actions';
-
-export const updateAuth = (
-  user: firebase.User | null
-): ThunkAction<void, AppState, null, Action> => (dispatch, getState) => {
-  const state = getState();
-  const uid = state.auth.pending ? null : state.auth.uid;
-  const newUid = user && user.uid;
-  if (uid && uid !== newUid) {
-    dispatch(resetStore());
-  }
-
-  dispatch({
-    type: AuthActionTypes.UPDATE_AUTH,
-    user,
-  });
-};
+import { receiveUserData } from './actions';
 
 export const fetchUserData = (): ThunkAction<void, AppState, null, Action> => (
   dispatch,
