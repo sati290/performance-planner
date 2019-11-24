@@ -20,7 +20,9 @@ const App: React.FC = () => {
   useEffect(() => {
     const unsubscribe = firebase.auth().onAuthStateChanged(user => {
       dispatch(authStateChanged(user));
-      dispatch(userDataFetchRequested());
+      if (user) {
+        dispatch(userDataFetchRequested());
+      }
     });
 
     return unsubscribe;
