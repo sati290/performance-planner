@@ -151,7 +151,7 @@ export const syncStravaActivities = (): ThunkAction<
     strava: { activities },
     userData,
   } = getState();
-  if (activities.status === 'loaded' && userData.loaded) {
+  if (activities.status === 'loaded' && userData.status === 'loaded') {
     dispatch(
       updateStravaSyncStatus({
         status: 'syncing',

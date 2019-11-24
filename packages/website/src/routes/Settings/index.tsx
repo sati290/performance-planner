@@ -15,7 +15,7 @@ import {
 import * as qs from 'querystring';
 import stravaConnectImage from './strava-connect-button.svg';
 import { AppState } from '../../store/reducers';
-import { disconnectLinkedProvider } from '../../store/thunks';
+import { userDataDisconnectProviderRequested } from '../../store/actions';
 import Loading from '../../components/Loading';
 import AthleteDataForm from './AthleteDataForm';
 
@@ -51,7 +51,9 @@ const Settings: React.FC = () => {
   const dispatch = useDispatch();
 
   const providers = useSelector((state: AppState) =>
-    state.userData.loaded ? state.userData.data.linkedProviders : null
+    state.userData.status === 'loaded' || state.userData.status === 'reloading'
+      ? state.userData.data.linkedProviders
+      : null
   );
 
   return (
@@ -76,7 +78,9 @@ const Settings: React.FC = () => {
               <ListItemSecondaryAction>
                 {providers.some(p => p === 'strava') ? (
                   <Button
-                    onClick={() => dispatch(disconnectLinkedProvider('strava'))}
+                    onClick={() =>
+                      dispatch(userDataDisconnectProviderRequested('strava'))
+                    }
                   >
                     Disconnect
                   </Button>

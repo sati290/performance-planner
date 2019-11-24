@@ -37,21 +37,42 @@ export interface UserData {
 }
 
 export type UserDataState =
-  | { loaded: false }
-  | { loaded: true; data: UserData };
+  | { status: 'unloaded' | 'loading' | 'error' }
+  | { status: 'loaded' | 'reloading'; data: UserData };
 
 export enum UserDataActionTypes {
-  RECEIVE = 'RECEIVE_USER_DATA',
-  RESET = 'RESET_USER_DATA',
+  FETCH_REQUESTED = 'USER_DATA/FETCH_REQUESTED',
+  FETCH_SUCCEEDED = 'USER_DATA/FETCH_SUCCEEDED',
+  FETCH_FAILED = 'USER_DATA/FETCH_FAILED',
+  UPDATE_REQUESTED = 'USER_DATA/UPDATE_REQUESTED',
+  DISCONNECT_PROVIDER_REQUESTED = 'USER_DATA/DISCONNECT_PROVIDER_REQUESTED',
 }
 
-export interface ReceiveUserDataAction {
-  type: UserDataActionTypes.RECEIVE;
-  data: UserData;
+export interface UserDataFetchRequestedAction {
+  type: UserDataActionTypes.FETCH_REQUESTED;
 }
 
-export interface ResetUserDataAction {
-  type: UserDataActionTypes.RESET;
+export interface UserDataFetchSucceededAction {
+  type: UserDataActionTypes.FETCH_SUCCEEDED;
+  payload: UserData;
 }
 
-export type UserDataActions = ReceiveUserDataAction | ResetUserDataAction;
+export interface UserDataFetchFailedAction {
+  type: UserDataActionTypes.FETCH_FAILED;
+}
+
+export interface UserDataUpdateRequestedAction {
+  type: UserDataActionTypes.UPDATE_REQUESTED;
+  payload: Partial<UserData>;
+}
+
+export interface UserDataDisconnectProviderRequestedAction {
+  type: UserDataActionTypes.DISCONNECT_PROVIDER_REQUESTED;
+  payload: string;
+}
+
+export type UserDataActions =
+  | UserDataFetchRequestedAction
+  | UserDataFetchSucceededAction
+  | UserDataFetchFailedAction
+  | UserDataUpdateRequestedAction;

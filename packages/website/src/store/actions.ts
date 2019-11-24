@@ -5,6 +5,11 @@ import {
   AuthLogoutAction,
   UserData,
   UserDataActionTypes,
+  UserDataFetchRequestedAction,
+  UserDataFetchSucceededAction,
+  UserDataFetchFailedAction,
+  UserDataUpdateRequestedAction,
+  UserDataDisconnectProviderRequestedAction,
 } from './types';
 
 export const authStateChanged = (
@@ -20,9 +25,31 @@ export const authLogout = (): AuthLogoutAction => ({
   type: AuthActionTypes.LOGOUT,
 });
 
-export const receiveUserData = (data: UserData) => ({
-  type: UserDataActionTypes.RECEIVE,
-  data,
+export const userDataFetchRequested = (): UserDataFetchRequestedAction => ({
+  type: UserDataActionTypes.FETCH_REQUESTED,
 });
 
-export const resetUserData = () => ({ type: UserDataActionTypes.RESET });
+export const userDataFetchSucceeded = (
+  payload: UserData
+): UserDataFetchSucceededAction => ({
+  type: UserDataActionTypes.FETCH_SUCCEEDED,
+  payload,
+});
+
+export const userDataFetchFailed = (): UserDataFetchFailedAction => ({
+  type: UserDataActionTypes.FETCH_FAILED,
+});
+
+export const userDataUpdateRequested = (
+  payload: Partial<UserData>
+): UserDataUpdateRequestedAction => ({
+  type: UserDataActionTypes.UPDATE_REQUESTED,
+  payload,
+});
+
+export const userDataDisconnectProviderRequested = (
+  payload: string
+): UserDataDisconnectProviderRequestedAction => ({
+  type: UserDataActionTypes.DISCONNECT_PROVIDER_REQUESTED,
+  payload,
+});

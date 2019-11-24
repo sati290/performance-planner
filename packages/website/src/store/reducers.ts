@@ -28,12 +28,24 @@ const authReducer: Reducer<AuthState, AuthActions> = (
 };
 
 const userDataReducer: Reducer<UserDataState, UserDataActions> = (
-  state = { loaded: false },
+  state = { status: 'unloaded' },
   action
 ) => {
   switch (action.type) {
-    case UserDataActionTypes.RECEIVE:
-      return { loaded: true, data: action.data };
+    case UserDataActionTypes.FETCH_REQUESTED:
+      switch (state.status) {
+        case 'unloaded':
+        case 'error':
+          return { status: 'loading' };
+        case 'loaded':
+          return { ...state, status: 'reloading' };
+        default:
+          return state;
+      }
+    case UserDataActionTypes.FETCH_SUCCEEDED:
+      return { status: 'loaded', data: action.payload };
+    case UserDataActionTypes.FETCH_FAILED:
+      return { status: 'error' };
     default:
       return state;
   }

@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import * as firebase from 'firebase/app';
 import * as qs from 'querystring';
 import axios from 'axios';
-import { fetchUserData } from '../store/thunks';
+import { userDataFetchRequested } from '../store/actions';
 import { receiveStravaAPIToken } from '../store/strava/actions';
 import Loading from '../components/Loading';
 
@@ -39,7 +39,7 @@ const AuthCallback: React.FC = () => {
             expiresAt: response.data.expires_at,
           })
         );
-        dispatch(fetchUserData());
+        dispatch(userDataFetchRequested());
         history.replace(from);
       })
       .catch(console.error);

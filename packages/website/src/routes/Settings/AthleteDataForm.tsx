@@ -5,7 +5,7 @@ import { Formik, Form } from 'formik';
 import { Grid, MenuItem, Button } from '@material-ui/core';
 import { UserData } from '../../store/types';
 import { AppState } from '../../store/reducers';
-import { updateUserData } from '../../store/thunks';
+import { userDataUpdateRequested } from '../../store/actions';
 import Loading from '../../components/Loading';
 import FormikTextField from '../../components/FormikTextField';
 
@@ -22,7 +22,7 @@ const AthleteDataForm: React.FC<AthleteDataFormProps> = ({ userData }) => {
   const dispatch = useDispatch();
   const handleSubmit = (values: FormData) => {
     const data = _.pickBy(values);
-    dispatch(updateUserData(data));
+    dispatch(userDataUpdateRequested(data));
   };
 
   return (
@@ -87,7 +87,10 @@ const AthleteDataForm: React.FC<AthleteDataFormProps> = ({ userData }) => {
 
 const AthleteDataFormOrLoading: React.FC = () => {
   const userData = useSelector<AppState, FormData | null>(state => {
-    if (state.userData.loaded) {
+    if (
+      state.userData.status === 'loaded' ||
+      state.userData.status === 'reloading'
+    ) {
       const {
         gender = '',
         restingHR = '',
