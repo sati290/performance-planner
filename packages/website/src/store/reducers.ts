@@ -1,6 +1,5 @@
 import { Reducer, combineReducers, AnyAction } from 'redux';
 import {
-  RESET_STORE,
   AuthState,
   AuthActionTypes,
   AuthActions,
@@ -15,14 +14,14 @@ const authReducer: Reducer<AuthState, AuthActions> = (
   action
 ) => {
   switch (action.type) {
-    case AuthActionTypes.START_UPDATE:
-      return state;
-    case AuthActionTypes.FINISH_UPDATE: {
-      const { payload } = action;
-      return payload
-        ? { pending: false, uid: payload.uid, email: payload.email || '' }
-        : { pending: false, uid: null };
-    }
+    case AuthActionTypes.LOGIN:
+      return {
+        pending: false,
+        uid: action.payload.uid,
+        email: action.payload.email || '',
+      };
+    case AuthActionTypes.LOGOUT:
+      return { pending: false, uid: null };
     default:
       return state;
   }
@@ -49,7 +48,7 @@ const appReducer = combineReducers({
 export type AppState = ReturnType<typeof appReducer>;
 
 const rootReducer: Reducer<AppState, AnyAction> = (state, action) => {
-  if (action.type === RESET_STORE) {
+  if (action.type === AuthActionTypes.LOGOUT) {
     return appReducer(undefined, action);
   } else {
     return appReducer(state, action);

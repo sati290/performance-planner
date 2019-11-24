@@ -1,24 +1,24 @@
 import {
-  RESET_STORE,
   AuthActionTypes,
+  AuthStateChangedAction,
+  AuthLoginAction,
+  AuthLogoutAction,
   UserData,
   UserDataActionTypes,
-  StartAuthUpdateAction,
-  FinishAuthUpdateAction,
 } from './types';
 
-export const resetStore = () => ({ type: RESET_STORE });
-
-export const startAuthUpdate = (
+export const authStateChanged = (
   payload: firebase.User | null
-): StartAuthUpdateAction => ({
-  type: AuthActionTypes.START_UPDATE,
+): AuthStateChangedAction => ({ type: AuthActionTypes.STATE_CHANGED, payload });
+
+export const authLogin = (payload: firebase.User): AuthLoginAction => ({
+  type: AuthActionTypes.LOGIN,
   payload,
 });
 
-export const finishAuthUpdate = (
-  payload: firebase.User | null
-): FinishAuthUpdateAction => ({ type: AuthActionTypes.FINISH_UPDATE, payload });
+export const authLogout = (): AuthLogoutAction => ({
+  type: AuthActionTypes.LOGOUT,
+});
 
 export const receiveUserData = (data: UserData) => ({
   type: UserDataActionTypes.RECEIVE,

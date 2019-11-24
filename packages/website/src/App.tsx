@@ -5,7 +5,7 @@ import { CssBaseline } from '@material-ui/core';
 import * as firebase from 'firebase/app';
 import './FirebaseInit';
 import { AppState } from './store/reducers';
-import { startAuthUpdate } from './store/actions';
+import { authStateChanged } from './store/actions';
 import { fetchUserData } from './store/thunks';
 import TopBar from './components/TopBar';
 import Loading from './components/Loading';
@@ -20,7 +20,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const unsubscribe = firebase.auth().onAuthStateChanged(user => {
-      dispatch(startAuthUpdate(user));
+      dispatch(authStateChanged(user));
       dispatch(fetchUserData());
     });
 

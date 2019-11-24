@@ -1,22 +1,27 @@
 import { select, put, all, takeLatest } from 'redux-saga/effects';
-import { AuthActionTypes, StartAuthUpdateAction } from './types';
+import { AuthActionTypes, AuthStateChangedAction, AuthState } from './types';
 import { AppState } from './reducers';
-import { resetStore, finishAuthUpdate } from './actions';
+import { authLogin, authLogout } from './actions';
 
-function* authUpdate(action: StartAuthUpdateAction) {
-  const currentUid = yield select((state: AppState) =>
-    state.auth.pending ? null : state.auth.uid
-  );
-  const newUid = action.payload ? action.payload.uid : null;
-  if (currentUid && currentUid !== newUid) yield put(resetStore());
+function* authStateChanged(action: AuthStateChangedAction) {
+  const authState: AuthState = yield select((state: AppState) => state.auth);
+  const currentUid = authState.pending ? null : authState.uid;
 
-  yield put(finishAuthUpdate(action.payload));
+  if (currentUid) {
+    yield put(authLogout());
+  }
+
+  if (action.payload && action.payload.uid) {
+    yield put(authLogin(action.payload));
+  } else if (authState.pending) {
+    yield put(authLogout());
+  }
 }
 
-function* watchAuthUpdate() {
-  yield takeLatest(AuthActionTypes.START_UPDATE, authUpdate);
+function* watchAuthStateChanged() {
+  yield takeLatest(AuthActionTypes.STATE_CHANGED, authStateChanged);
 }
 
 export default function* rootSaga() {
-  yield all([watchAuthUpdate()]);
+  yield all([watchAuthStateChanged()]);
 }

@@ -1,26 +1,32 @@
-export const RESET_STORE = 'RESET_STORE';
-
 export type AuthState =
   | { pending: true }
   | { pending: false; uid: null }
   | { pending: false; uid: string; email: string };
 
 export enum AuthActionTypes {
-  START_UPDATE = 'AUTH/START_UPDATE',
-  FINISH_UPDATE = 'AUTH/FINISH_UPDATE',
+  STATE_CHANGED = 'AUTH/STATE_CHANGED',
+  LOGIN = 'AUTH/LOGIN',
+  LOGOUT = 'AUTH/LOGOUT',
 }
 
-export interface StartAuthUpdateAction {
-  type: AuthActionTypes.START_UPDATE;
+export interface AuthStateChangedAction {
+  type: AuthActionTypes.STATE_CHANGED;
   payload: firebase.User | null;
 }
 
-export interface FinishAuthUpdateAction {
-  type: AuthActionTypes.FINISH_UPDATE;
-  payload: firebase.User | null;
+export interface AuthLoginAction {
+  type: AuthActionTypes.LOGIN;
+  payload: firebase.User;
 }
 
-export type AuthActions = StartAuthUpdateAction | FinishAuthUpdateAction;
+export interface AuthLogoutAction {
+  type: AuthActionTypes.LOGOUT;
+}
+
+export type AuthActions =
+  | AuthStateChangedAction
+  | AuthLoginAction
+  | AuthLogoutAction;
 
 export interface UserData {
   gender?: 'male' | 'female';
