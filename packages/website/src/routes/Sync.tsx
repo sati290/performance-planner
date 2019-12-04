@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Typography, Container } from '@material-ui/core';
 import { AppState } from '../store/reducers';
-import { syncStravaActivities } from '../store/strava/thunks';
+import { syncRequested } from '../store/strava/actions';
 
 const Sync: React.FC = () => {
   const dispatch = useDispatch();
@@ -20,7 +20,7 @@ const Sync: React.FC = () => {
         disabled={
           syncState.status !== 'ready' && syncState.status !== 'finished'
         }
-        onClick={() => dispatch(syncStravaActivities())}
+        onClick={() => dispatch(syncRequested())}
       >
         Start Sync
       </Button>

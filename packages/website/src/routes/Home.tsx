@@ -9,19 +9,20 @@ import {
   TableHead,
 } from '@material-ui/core';
 import { AppState } from '../store/reducers';
-import { fetchStravaActivities } from '../store/strava/thunks';
+import { activitiesFetchRequested } from '../store/strava/actions';
 
 const Home: React.FC = () => {
   const dispatch = useDispatch();
   const activities = useSelector((state: AppState) =>
-    state.strava.activities.status !== 'unloaded'
+    state.strava.activities.status === 'loaded' ||
+    state.strava.activities.status === 'loading'
       ? state.strava.activities.data
       : []
   );
 
   return (
     <>
-      <Button onClick={() => dispatch(fetchStravaActivities())}>
+      <Button onClick={() => dispatch(activitiesFetchRequested())}>
         Fetch activities
       </Button>
       <Table>

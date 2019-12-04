@@ -1,29 +1,68 @@
+import { ActionCreator } from 'redux';
 import {
   StravaAPIToken,
   Activities,
   SyncState,
   StravaActionTypes,
+  TokenReceivedAction,
+  ActivitiesFetchRequestedAction,
+  ActivitiesFetchStartedAction,
+  ActivitiesFetchSucceededAction,
+  ActivitiesFetchFailedAction,
+  ActivitiesReceivedAction,
+  SyncRequestedAction,
+  SyncStartedAction,
+  SyncSucceededAction,
+  SyncFailedAction,
+  SyncProgressAction,
 } from './types';
 
-export const receiveStravaAPIToken = (data: StravaAPIToken) => ({
-  type: StravaActionTypes.RECEIVE_API_TOKEN,
-  data,
+export const tokenReceived: ActionCreator<TokenReceivedAction> = (
+  payload: StravaAPIToken
+) => ({
+  type: StravaActionTypes.TOKEN_RECEIVED,
+  payload,
 });
 
-export const startLoadingStravaActivities = () => ({
-  type: StravaActionTypes.START_LOADING_ACTIVITIES,
+export const activitiesFetchRequested: ActionCreator<
+  ActivitiesFetchRequestedAction
+> = () => ({ type: StravaActionTypes.ACTIVITIES_FETCH_REQUESTED });
+
+export const activitiesFetchStarted: ActionCreator<
+  ActivitiesFetchStartedAction
+> = () => ({ type: StravaActionTypes.ACTIVITIES_FETCH_STARTED });
+
+export const activitiesFetchSucceeded: ActionCreator<
+  ActivitiesFetchSucceededAction
+> = () => ({ type: StravaActionTypes.ACTIVITIES_FETCH_SUCCEEDED });
+
+export const activitiesFetchFailed: ActionCreator<
+  ActivitiesFetchFailedAction
+> = () => ({ type: StravaActionTypes.ACTIVITIES_FETCH_FAILED });
+
+export const activitiesReceived: ActionCreator<ActivitiesReceivedAction> = (
+  payload: Activities
+) => ({ type: StravaActionTypes.ACTIVITIES_RECEIVED, payload });
+
+export const syncRequested: ActionCreator<SyncRequestedAction> = () => ({
+  type: StravaActionTypes.SYNC_REQUESTED,
 });
 
-export const receiveStravaActivities = (data: Activities) => ({
-  type: StravaActionTypes.RECEIVE_ACTIVITIES,
-  data,
+export const syncStarted: ActionCreator<SyncStartedAction> = () => ({
+  type: StravaActionTypes.SYNC_STARTED,
 });
 
-export const finishLoadingStravaActivities = () => ({
-  type: StravaActionTypes.FINISH_LOADING_ACTIVITIES,
+export const syncSucceeded: ActionCreator<SyncSucceededAction> = () => ({
+  type: StravaActionTypes.SYNC_SUCCEEDED,
 });
 
-export const updateStravaSyncStatus = (data: SyncState) => ({
-  type: StravaActionTypes.UPDATE_SYNC_STATUS,
-  data,
+export const syncFailed: ActionCreator<SyncFailedAction> = () => ({
+  type: StravaActionTypes.SYNC_FAILED,
+});
+
+export const syncProgress: ActionCreator<SyncProgressAction> = (
+  payload: SyncState
+) => ({
+  type: StravaActionTypes.SYNC_PROGRESS,
+  payload,
 });

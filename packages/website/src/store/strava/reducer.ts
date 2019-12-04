@@ -3,31 +3,21 @@ import { StravaState, StravaActions, StravaActionTypes } from './types';
 
 const reducer: Reducer<StravaState, StravaActions> = (
   state = {
-    accessToken: '',
-    expiresAt: 0,
+    token: {
+      accessToken: '',
+      expiresAt: 0,
+    },
     activities: { status: 'unloaded' },
     sync: { status: 'ready' },
   },
   action
 ) => {
   switch (action.type) {
-    case StravaActionTypes.RECEIVE_API_TOKEN:
-      return { ...state, ...action.data };
-    case StravaActionTypes.START_LOADING_ACTIVITIES:
+    case StravaActionTypes.TOKEN_RECEIVED:
+      return { ...state, token: action.payload };
+    case StravaActionTypes.ACTIVITIES_FETCH_STARTED:
       return { ...state, activities: { status: 'loading', data: [] } };
-    case StravaActionTypes.RECEIVE_ACTIVITIES:
-      if (state.activities.status === 'loading') {
-        return {
-          ...state,
-          activities: {
-            status: 'loading',
-            data: [...state.activities.data, ...action.data],
-          },
-        };
-      } else {
-        return state;
-      }
-    case StravaActionTypes.FINISH_LOADING_ACTIVITIES:
+    case StravaActionTypes.ACTIVITIES_FETCH_SUCCEEDED:
       if (state.activities.status === 'loading') {
         return {
           ...state,
@@ -36,8 +26,39 @@ const reducer: Reducer<StravaState, StravaActions> = (
       } else {
         return state;
       }
-    case StravaActionTypes.UPDATE_SYNC_STATUS:
-      return { ...state, sync: action.data };
+    case StravaActionTypes.ACTIVITIES_FETCH_FAILED:
+      return { ...state, activities: { status: 'error' } };
+    case StravaActionTypes.ACTIVITIES_RECEIVED:
+      if (state.activities.status === 'loading') {
+        return {
+          ...state,
+          activities: {
+            status: 'loading',
+            data: [...state.activities.data, ...action.payload],
+          },
+        };
+      } else {
+        return state;
+      }
+    case StravaActionTypes.SYNC_STARTED:
+      return { ...state, sync: { status: 'started' } };
+    case StravaActionTypes.SYNC_SUCCEEDED:
+      if (state.sync.status === 'syncing') {
+        return {
+          ...state,
+          sync: {
+            ...state.sync,
+            status: 'finished',
+            activitiesProcessed: state.sync.activitiesTotal,
+          },
+        };
+      } else {
+        return state;
+      }
+    case StravaActionTypes.SYNC_FAILED:
+      return { ...state, sync: { ...state.sync, status: 'error' } };
+    case StravaActionTypes.SYNC_PROGRESS:
+      return { ...state, sync: action.payload };
     default:
       return state;
   }

@@ -16,6 +16,7 @@ import {
   userDataFetchSucceeded,
   userDataFetchFailed,
 } from './actions';
+import stravaSaga from './strava/sagas';
 
 function* authStateChanged(action: AuthStateChangedAction) {
   const authState: AuthState = yield select((state: AppState) => state.auth);
@@ -131,6 +132,7 @@ function* userDataDisconnectProvider() {
 
 export default function* rootSaga() {
   yield all([
+    stravaSaga(),
     watchAuthStateChanged(),
     userDataFetch(),
     userDataUpdate(),
